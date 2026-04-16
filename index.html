@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Crowd Intelligence Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Landing Screen -->
+    <div id="landing-screen" class="screen full-page-center active">
+        <div class="glass-card welcome-card">
+            <div class="logo-container">
+                <div class="pulse-ring"></div>
+                <div class="ai-icon">AI</div>
+            </div>
+            <h1>Crowd Intelligence <span class="highlight">Assistant</span></h1>
+            <p class="subtitle">Where are you heading today?</p>
+            
+            <div class="intent-grid">
+                <button class="intent-btn" data-intent="darshan">
+                    <span class="icon">🙏</span>
+                    <span class="text">Go for Darshan</span>
+                </button>
+                <button class="intent-btn" data-intent="food">
+                    <span class="icon">🍱</span>
+                    <span class="text">Find Food</span>
+                </button>
+                <button class="intent-btn" data-intent="exit">
+                    <span class="icon">🚪</span>
+                    <span class="text">Find Exit</span>
+                </button>
+                <button class="intent-btn emergency-intent" data-intent="emergency">
+                    <span class="icon">⚠️</span>
+                    <span class="text">Emergency</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assistant Dashboard -->
+    <div id="dashboard-screen" class="screen main-layout">
+        
+        <!-- Top Control Bar -->
+        <header class="top-bar glass-panel">
+            <div class="branding" id="back-btn">
+                <div class="ai-icon small">AI</div>
+                <span>Assistant</span>
+            </div>
+            
+            <div class="scenario-controls">
+                <span>Simulation:</span>
+                <button class="scenario-btn active" data-scenario="low">Low Crowd</button>
+                <button class="scenario-btn" data-scenario="normal">Normal</button>
+                <button class="scenario-btn" data-scenario="peak">Peak Crowd</button>
+            </div>
+            
+            <button id="emergency-btn" class="danger-btn">⚠️ Emergency</button>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Map Area -->
+            <div class="map-container">
+                <div class="target-title">
+                    <h2 id="current-destination">Heading to: <span>Darshan</span></h2>
+                    <div id="crowd-status-indicator" class="status-badge normal">Status: Normal</div>
+                </div>
+                
+                <div class="map-visual glass-panel">
+                    <!-- SVG for drawing route lines -->
+                    <svg id="route-svg" class="route-svg" xmlns="http://www.w3.org/2000/svg">
+                        <path id="active-route-path" d="" class="route-line" />
+                        <path id="alt-route-path" d="" class="route-line alt" />
+                    </svg>
+
+                    <!-- Rendered nodes will be injected here via JS -->
+                    <div id="map-nodes"></div>
+                </div>
+                
+                <!-- Action-Oriented Decision Panel -->
+                <div class="guidance-panel glass-panel">
+                    <!-- 1. What should I do? -->
+                    <div class="action-header">
+                        <span class="action-label">Recommended Action</span>
+                        <h3 id="action-heading">Take --</h3>
+                    </div>
+                    
+                    <!-- 2. What am I saving? (The Deltas) -->
+                    <div class="savings-highlight" id="savings-highlight">
+                        <div class="saving-item time">
+                            <span>Time Strategy</span>
+                            <strong id="ui-time-saved">-- min</strong>
+                        </div>
+                        <div class="saving-item crowd">
+                            <span>Crowd Impact</span>
+                            <strong id="ui-crowd-diff">--</strong>
+                        </div>
+                    </div>
+
+                    <!-- 3. Why? (Human Reason) -->
+                    <div class="action-reasoning">
+                        <p id="action-human-reason">--</p>
+                    </div>
+                    
+                    <!-- Predictive Insight -->
+                    <div class="predictive-box">
+                        <span class="pred-icon">🔮</span>
+                        <div class="pred-content">
+                            <strong>Predictive Insight:</strong>
+                            <p id="predictive-insight-text">--</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 4. Raw Stats -->
+                    <div class="route-details-sub">
+                        <div class="route-stat">
+                            <span>Total Time</span>
+                            <strong id="rec-time">-- min</strong>
+                        </div>
+                        <div class="route-stat">
+                            <span>Distance</span>
+                            <strong id="rec-dist">-- m</strong>
+                        </div>
+                        <div class="route-stat">
+                            <span>Average Crowd</span>
+                            <strong id="rec-crowd" class="crowd-val">--</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assistant Sidebar -->
+            <div class="assistant-panel glass-panel">
+                <div class="chat-header">
+                    <h3>Live Guidance</h3>
+                    <div class="live-indicator">
+                        <div class="dot blinking"></div>
+                        <span>Live</span>
+                    </div>
+                </div>
+                
+                <div class="chat-feed" id="chat-feed">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Emergency Modal -->
+    <div id="emergency-modal" class="modal-overlay hidden">
+        <div class="emergency-card">
+            <div class="warning-icon pulse">⚠️</div>
+            <h2>EMERGENCY DETECTED</h2>
+            <p>Immediate evacuation required.</p>
+            <div class="evac-info">
+                <span>Nearest Exit:</span>
+                <strong id="nearest-exit-name">Gate 4</strong>
+            </div>
+            <p class="instruction">Follow the red flashing path immediately.</p>
+            <button id="dismiss-emergency" class="outline-btn">Dismiss (Simulation)</button>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
