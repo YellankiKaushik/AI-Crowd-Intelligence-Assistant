@@ -371,8 +371,11 @@ function simulateEvents() {
 
     // Minor predictive time adjustment to render UI alive
     if (evt.type === 'alert' && bestRouteState) {
-        let newTime = parseInt(recTimeEl.innerText) + 2;
-        recTimeEl.innerText = `${newTime} min`;
+        let newTime = Math.min(
+            parseInt(recTimeEl.innerText) + 2,
+            bestRouteState.calculatedTime * 1.5
+        );
+        recTimeEl.innerText = `${Math.round(newTime)} min`;
     }
 }
 

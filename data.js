@@ -28,7 +28,7 @@ const intentRoutes = {
             id: 'route_darshan_b',
             name: 'Via Gate B',
             path: ['start', 'gate_b', 'hall_2', 'darshan_point'],
-            baseTime: 40,
+            baseTime: 25,
             baseDist: 800,
             baseCrowdLevel: 0.3 // Low baseline crowd
         }
@@ -46,7 +46,7 @@ const intentRoutes = {
             id: 'route_food_alt',
             name: 'Scenic Alternate',
             path: ['start', 'hall_1', 'food_court'],
-            baseTime: 28,
+            baseTime: 18,
             baseDist: 700,
             baseCrowdLevel: 0.2
         }
@@ -64,7 +64,7 @@ const intentRoutes = {
             id: 'route_exit_south',
             name: 'South Exit',
             path: ['start', 'gate_b', 'exit_2'],
-            baseTime: 25,
+            baseTime: 15,
             baseDist: 600,
             baseCrowdLevel: 0.1
         }
@@ -74,7 +74,7 @@ const intentRoutes = {
 // Scenarios influence the base data
 const scenarios = {
     low: {
-        crowdMultiplier: 0.3,
+        crowdMultiplier: 0.15,
         timeMultiplier: 0.8, // Faster to walk
         name: "Low Crowd"
     },
@@ -116,26 +116,28 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
 
         if (scenarioKey === 'low') {
             if (r.baseCrowdLevel > 0.5) {
-                predScoreMod = 10; // Penalty because it will inherently get crowded
+                predScoreMod = 0; // Removed penalty to allow shorter route to win
                 predMsg = "This route will become crowded in 15–20 minutes. Best time to move is now.";
             } else {
                 predScoreMod = 0;
-                predMsg = "This path is expected to remain clear for the foreseeable future.";
+                predMsg = "This path is expected to remain clear.";
             }
         } else if (scenarioKey === 'normal') {
             if (r.baseCrowdLevel > 0.4) {
-                predScoreMod = 15; // Severe penalty, heading into peak
+                predScoreMod = 10; 
                 predMsg = "Heavy congestion expected very soon. If you don't move now, time delays will increase drastically.";
             } else {
-                predScoreMod = -5; // Reward, alternate route stays clear
+                predScoreMod = -5; 
                 predMsg = "Secondary routes will remain stable despite general venue crowding.";
             }
-
-
-
         } else if (scenarioKey === 'peak') {
-            predScoreMod = -10; // General easing penalty reduction
-            predMsg = "Crowds are peaking. Expected to start reducing in about 10-15 minutes.";
+            if (r.baseCrowdLevel > 0.4) {
+                predScoreMod = 25; 
+                predMsg = "Extreme congestion ahead. Taking the alternative path is strongly recommended.";
+            } else {
+                predScoreMod = -10; 
+                predMsg = "Crowds are peaking. This route bypasses the worst congestion safely.";
+            }
         }
 
         return {
@@ -152,6 +154,7 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
 
 // Simulated real-time events that can be popped into the feed
 const simulationEvents = [
+    // PEAK SCENARIO
     {
         type: 'alert',
         triggerScenario: 'peak',
@@ -164,6 +167,26 @@ const simulationEvents = [
         message: 'Rerouting to avoid congestion is under analysis.',
         insight: 'Currently, sticking to our mapped route remains your best option.'
     },
+    {
+        type: 'alert',
+        triggerScenario: 'peak',
+        message: 'Surge detected in adjacent zones.',
+        insight: 'I am holding your current path, but be prepared for minor slowdowns.'
+    },
+    {
+        type: 'insight',
+        triggerScenario: 'peak',
+        message: 'Movement speed is reducing facility-wide.',
+        insight: 'Patience is advised. Do not attempt to deviate into crowded shortcuts.'
+    },
+    {
+        type: 'alert',
+        triggerScenario: 'peak',
+        message: 'High density warning at major intersections.',
+        insight: 'Your calculated path is actively avoiding the worst of these zones.'
+    },
+
+    // NORMAL SCENARIO
     {
         type: 'success',
         triggerScenario: 'normal',
@@ -178,8 +201,28 @@ const simulationEvents = [
     },
     {
         type: 'success',
+        triggerScenario: 'normal',
+        message: 'Flow rate is consistent.',
+        insight: 'No adjustments needed at this time. Keep your pace.'
+    },
+    {
+        type: 'insight',
+        triggerScenario: 'normal',
+        message: 'Predictive models show stable conditions for the next 10 minutes.',
+        insight: 'You should reach your destination without unexpected delays.'
+    },
+    {
+        type: 'insight',
+        triggerScenario: 'normal',
+        message: 'Minor grouping ahead.',
+        insight: 'It will likely disperse by the time you reach that sector.'
+    },
+    
+    // LOW SCENARIO
+    {
+        type: 'success',
         triggerScenario: 'low',
-        message: 'You are on the optimal path.',
+        message: 'Your route remains the most efficient option.',
         insight: 'The path ahead is completely clear. You are making great time.'
     },
     {
@@ -187,5 +230,23 @@ const simulationEvents = [
         triggerScenario: 'low',
         message: 'All zones are operating well below capacity.',
         insight: 'Feel free to maintain your current comfortable pace.'
+    },
+    {
+        type: 'success',
+        triggerScenario: 'low',
+        message: 'Conditions are perfect for quick transit.',
+        insight: 'Density remains at minimal levels.'
+    },
+    {
+        type: 'insight',
+        triggerScenario: 'low',
+        message: 'No active crowd surges detected anywhere in the venue.',
+        insight: 'Your journey will be swift and uninterrupted.'
+    },
+    {
+        type: 'success',
+        triggerScenario: 'low',
+        message: 'Pathing efficiency is at maximum levels.',
+        insight: 'You are currently saving significant time compared to peak hour averages.'
     }
 ];
