@@ -94,17 +94,17 @@ const scenarios = {
 function getCalculatedRoutes(intentKey, scenarioKey) {
     const routes = intentRoutes[intentKey];
     if (!routes) return [];
-    
+
     const scenario = scenarios[scenarioKey];
-    
+
     return routes.map(r => {
         // Clamp crowd level between 0.1 and 1.0
         let crowdLevel = Math.min(1.0, Math.max(0.1, r.baseCrowdLevel * scenario.crowdMultiplier));
-        
+
         // Time increases non-linearly when crowd is high
         let timePenalty = crowdLevel > 0.7 ? 1.5 : 1.0;
         let estTime = Math.round(r.baseTime * scenario.timeMultiplier * timePenalty);
-        
+
         let crowdStr = 'Low';
         let crowdClass = 'val-low';
         if (crowdLevel > 0.7) { crowdStr = 'High'; crowdClass = 'val-high'; }
@@ -113,7 +113,7 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
         // Predictive Modifiers
         let predScoreMod = 0;
         let predMsg = "";
-        
+
         if (scenarioKey === 'low') {
             if (r.baseCrowdLevel > 0.5) {
                 predScoreMod = 10; // Penalty because it will inherently get crowded
@@ -130,6 +130,9 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
                 predScoreMod = -5; // Reward, alternate route stays clear
                 predMsg = "Secondary routes will remain stable despite general venue crowding.";
             }
+
+
+
         } else if (scenarioKey === 'peak') {
             predScoreMod = -10; // General easing penalty reduction
             predMsg = "Crowds are peaking. Expected to start reducing in about 10-15 minutes.";

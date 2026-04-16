@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- Landing Screen -->
@@ -20,7 +22,7 @@
             </div>
             <h1>Crowd Intelligence <span class="highlight">Assistant</span></h1>
             <p class="subtitle">Where are you heading today?</p>
-            
+
             <div class="intent-grid">
                 <button class="intent-btn" data-intent="darshan">
                     <span class="icon">🙏</span>
@@ -44,21 +46,21 @@
 
     <!-- Assistant Dashboard -->
     <div id="dashboard-screen" class="screen main-layout">
-        
+
         <!-- Top Control Bar -->
         <header class="top-bar glass-panel">
             <div class="branding" id="back-btn">
                 <div class="ai-icon small">AI</div>
                 <span>Assistant</span>
             </div>
-            
+
             <div class="scenario-controls">
                 <span>Simulation:</span>
                 <button class="scenario-btn active" data-scenario="low">Low Crowd</button>
                 <button class="scenario-btn" data-scenario="normal">Normal</button>
                 <button class="scenario-btn" data-scenario="peak">Peak Crowd</button>
             </div>
-            
+
             <button id="emergency-btn" class="danger-btn">⚠️ Emergency</button>
         </header>
 
@@ -69,7 +71,7 @@
                     <h2 id="current-destination">Heading to: <span>Darshan</span></h2>
                     <div id="crowd-status-indicator" class="status-badge normal">Status: Normal</div>
                 </div>
-                
+
                 <div class="map-visual glass-panel">
                     <!-- SVG for drawing route lines -->
                     <svg id="route-svg" class="route-svg" xmlns="http://www.w3.org/2000/svg">
@@ -80,7 +82,7 @@
                     <!-- Rendered nodes will be injected here via JS -->
                     <div id="map-nodes"></div>
                 </div>
-                
+
                 <!-- Action-Oriented Decision Panel -->
                 <div class="guidance-panel glass-panel">
                     <!-- 1. What should I do? -->
@@ -88,7 +90,7 @@
                         <span class="action-label">Recommended Action</span>
                         <h3 id="action-heading">Take --</h3>
                     </div>
-                    
+
                     <!-- 2. What am I saving? (The Deltas) -->
                     <div class="savings-highlight" id="savings-highlight">
                         <div class="saving-item time">
@@ -105,7 +107,7 @@
                     <div class="action-reasoning">
                         <p id="action-human-reason">--</p>
                     </div>
-                    
+
                     <!-- Predictive Insight -->
                     <div class="predictive-box">
                         <span class="pred-icon">🔮</span>
@@ -114,7 +116,7 @@
                             <p id="predictive-insight-text">--</p>
                         </div>
                     </div>
-                    
+
                     <!-- 4. Raw Stats -->
                     <div class="route-details-sub">
                         <div class="route-stat">
@@ -142,11 +144,14 @@
                         <span>Live</span>
                     </div>
                 </div>
-                
+
                 <div class="chat-feed" id="chat-feed">
                     <!-- Messages will be dynamically added here -->
                 </div>
             </div>
+
+
+
         </div>
 
     </div>
@@ -169,4 +174,5 @@
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>

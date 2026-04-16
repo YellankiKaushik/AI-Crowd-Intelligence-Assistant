@@ -5,6 +5,10 @@ let currentSimInterval = null;
 let bestRouteState = null;
 let lastSimMessage = null;
 
+
+
+
+
 // DOM Elements
 const landingScreen = document.getElementById('landing-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
@@ -62,7 +66,7 @@ function bindEvents() {
         btn.addEventListener('click', (e) => {
             scenarioBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             currentScenario = btn.getAttribute('data-scenario');
             if (currentIntent) {
                 // Rerun decision engine with new scenario
@@ -97,22 +101,22 @@ function switchScreen(screenType) {
 // Draw the physical nodes on the visualization
 function drawMapNodes() {
     mapNodesContainer.innerHTML = '';
-    
+
     Object.values(mapNodes).forEach(node => {
         const xPos = `${node.x}%`;
         const yPos = `${node.y}%`;
-        
+
         const nodeEl = document.createElement('div');
         nodeEl.className = 'map-node';
         nodeEl.id = `node-${node.id}`;
         nodeEl.style.left = xPos;
         nodeEl.style.top = yPos;
-        
+
         nodeEl.innerHTML = `
             <div class="node-label">${node.name}</div>
             <div class="node-dot"></div>
         `;
-        
+
         mapNodesContainer.appendChild(nodeEl);
     });
 }
@@ -148,13 +152,13 @@ function renderRouteLines(activeRoute, altRoute) {
     } else {
         altRoutePath.setAttribute('d', '');
     }
-    
+
     // Highlight active nodes in DOM
     document.querySelectorAll('.map-node').forEach(node => {
         node.classList.remove('active');
         node.classList.remove('destination');
     });
-    
+
     if (activeRoute) {
         activeRoute.path.forEach((nodeId, index) => {
             const el = document.getElementById(`node-${nodeId}`);
@@ -172,15 +176,15 @@ function renderRouteLines(activeRoute, altRoute) {
 function startAssistantFlow(intentKey) {
     currentIntent = intentKey;
     switchScreen('dashboard');
-    
+
     chatFeed.innerHTML = ''; // Clear chat
-    
+
     // Set Title
     let titleStr = intentKey.charAt(0).toUpperCase() + intentKey.slice(1);
     currentDestTitle.innerText = titleStr;
-    
+
     processIntent(intentKey, false);
-    
+
     // Start simulation loop
     clearInterval(currentSimInterval);
     currentSimInterval = setInterval(simulateEvents, 12000); // Trigger an event every 12 seconds but randomizer inside will space it out naturally
@@ -189,7 +193,7 @@ function startAssistantFlow(intentKey) {
 // Core Decision Engine
 function processIntent(intentKey, isRecalculation = false) {
     const routes = getCalculatedRoutes(intentKey, currentScenario);
-    
+
     if (routes.length === 0) return;
 
     // Decision Logic: Compare (Time * 0.7 + Crowd * 0.3 heavily penalized)
@@ -224,9 +228,9 @@ function processIntent(intentKey, isRecalculation = false) {
     if (altRoute) {
         let timeDiff = altRoute.calculatedTime - bestRoute.calculatedTime;
         let crowdDiff = altRoute.crowdRaw - bestRoute.crowdRaw;
-        
+
         savingsHighlightEl.style.display = 'flex';
-        
+
         if (timeDiff > 0) {
             uiTimeSavedEl.innerText = `${timeDiff} min saved`;
             uiTimeSavedEl.style.color = "var(--accent-green)";
@@ -237,7 +241,7 @@ function processIntent(intentKey, isRecalculation = false) {
             uiTimeSavedEl.innerText = `+${Math.abs(timeDiff)} min detour`;
             uiTimeSavedEl.style.color = "var(--accent-yellow)";
         }
-        
+
         if (crowdDiff > 0.3) {
             uiCrowdDiffEl.innerText = 'Avoids major crowd';
             uiCrowdDiffEl.style.color = "var(--accent-green)";
@@ -265,7 +269,7 @@ function processIntent(intentKey, isRecalculation = false) {
         savingsHighlightEl.style.display = 'none';
         reasonText = `This is the only direct and clear route to your destination.`;
     }
-    
+
     actionHumanReasonEl.innerText = reasonText;
     predictiveInsightEl.innerText = bestRoute.predictionText || "No active predictions for this area.";
 
@@ -287,7 +291,7 @@ function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonT
     if (!isRecalculation) {
         // Step 1: Initial acknowledgment
         addChatMessage('System', `Initiating guidance to ${currentIntent.toUpperCase()}...`, 'message');
-        
+
         // Step 2: "Thinking" phase
         setTimeout(() => {
             addChatMessage('System', `I am analyzing current crowd conditions and historical movement vectors across the venue...`, 'insight');
@@ -302,9 +306,9 @@ function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonT
         setTimeout(() => {
             addChatMessage('Recommendation', `Please take ${bestRoute.name}.`, 'message', reasonText);
         }, 4500);
-        
+
         // Step 5: Predictive message drop natively into chat
-        if(bestRoute.predictionText) {
+        if (bestRoute.predictionText) {
             setTimeout(() => {
                 addChatMessage('Predictive AI', bestRoute.predictionText, 'insight');
             }, 7000);
@@ -313,7 +317,7 @@ function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonT
     } else {
         // Rerouting logic
         addChatMessage('System Alert', `Crowd dynamics have shifted locally. I am recalculating your path...`, 'alert');
-        
+
         setTimeout(() => {
             addChatMessage('Recommendation', `Dynamic adjustment applied. New recommended route is ${bestRoute.name}.`, 'success', 'Calculated based on live scenario constraints to save time.');
         }, 2000);
@@ -324,7 +328,7 @@ function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonT
 function addChatMessage(sender, text, msgClass, reasonText = '') {
     const msgDiv = document.createElement('div');
     msgDiv.className = `message ${msgClass}`;
-    
+
     let reasonHtml = reasonText ? `<div class="msg-reason"><strong>Why: </strong> ${reasonText}</div>` : '';
 
     msgDiv.innerHTML = `
@@ -337,36 +341,36 @@ function addChatMessage(sender, text, msgClass, reasonText = '') {
     `;
 
     chatFeed.appendChild(msgDiv);
-    
+
     // Auto scroll
     chatFeed.scrollTop = chatFeed.scrollHeight;
 }
 
 // Simulate Real-time adjustments
 function simulateEvents() {
-    if(!bestRouteState) return;
-    
+    if (!bestRouteState) return;
+
     // 30% chance to skip an event drop so it doesn't feel robotic or overload the user
     if (Math.random() < 0.3) return;
-    
+
     // Pick random insight event filtered directly by strictly matching current scenario and preventing duplicates
     let eventOptions = simulationEvents.filter(e => e.triggerScenario === currentScenario && e.message !== lastSimMessage);
-    
+
     // Fallback in the rare case there is only 1 available message for the scenario
     if (eventOptions.length === 0) {
         eventOptions = simulationEvents.filter(e => e.triggerScenario === currentScenario);
         if (eventOptions.length === 0) return;
     }
-    
+
     let randIdx = Math.floor(Math.random() * eventOptions.length);
     let evt = eventOptions[randIdx];
-    
+
     lastSimMessage = evt.message;
 
     addChatMessage('Live Update', evt.message, evt.type, evt.insight);
 
     // Minor predictive time adjustment to render UI alive
-    if(evt.type === 'alert' && bestRouteState) {
+    if (evt.type === 'alert' && bestRouteState) {
         let newTime = parseInt(recTimeEl.innerText) + 2;
         recTimeEl.innerText = `${newTime} min`;
     }
@@ -375,14 +379,14 @@ function simulateEvents() {
 // Emergency Trigger
 function triggerEmergency() {
     clearInterval(currentSimInterval);
-    
+
     emergencyModal.classList.remove('hidden');
-    
+
     // Get nearest exit (mock logic)
     let exitRoutes = getCalculatedRoutes('exit', 'low'); // Ignore crowd for nearest
     let bestExit = exitRoutes.sort((a, b) => a.baseDist - b.baseDist)[0];
-    
-    nearestExitName.innerText = bestExit.path[bestExit.path.length - 1].replace('_',' ').toUpperCase();
+
+    nearestExitName.innerText = bestExit.path[bestExit.path.length - 1].replace('_', ' ').toUpperCase();
 }
 
 // Start app
