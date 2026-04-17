@@ -13,8 +13,49 @@
 
 <body>
 
-    <!-- Landing Screen -->
+    <!-- New Product Landing Screen -->
     <div id="landing-screen" class="screen full-page-center active">
+        <div class="glass-card welcome-card landing-card">
+            <div class="logo-container">
+                <div class="ai-icon pulse">AI</div>
+            </div>
+            <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1rem;">Navigate Crowded Temples Without <span class="highlight">Confusion</span></h1>
+            <p class="subtitle" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem auto; line-height: 1.6;">
+                AI-powered guidance that helps you avoid long queues, reduce waiting time, and reach your destination faster.
+            </p>
+            
+            <div class="example-box">
+                <p><strong>Real-World Impact:</strong> During peak hours, users can avoid up to 1–2 hours of waiting using smart route recommendations.</p>
+            </div>
+            
+            <button id="start-btn" class="cta-btn">Start Your Journey</button>
+        </div>
+    </div>
+
+    <!-- Temple Selection Screen -->
+    <div id="temple-screen" class="screen full-page-center">
+        <div class="glass-card welcome-card">
+            <div class="logo-container">
+                <div class="ai-icon">AI</div>
+            </div>
+            <h1>Select Temple</h1>
+            <p class="subtitle">Choose a temple to begin your journey</p>
+
+            <div class="intent-grid">
+                <button id="tirupati-btn" class="intent-btn">
+                    <span class="icon">🏛️</span>
+                    <span class="text">Tirupati</span>
+                </button>
+                <button class="intent-btn disabled" disabled title="Coming soon">
+                    <span class="icon">🏛️</span>
+                    <span class="text">Coming Soon</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intent Selection Screen -->
+    <div id="intent-screen" class="screen full-page-center">
         <div class="glass-card welcome-card">
             <div class="logo-container">
                 <div class="pulse-ring"></div>

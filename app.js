@@ -10,7 +10,11 @@ let lastSimMessage = null;
 
 
 // DOM Elements
-const landingScreen = document.getElementById('landing-screen');
+const productLandingScreen = document.getElementById('landing-screen');
+const templeScreen = document.getElementById('temple-screen');
+const intentScreen = document.getElementById('intent-screen');
+const startBtn = document.getElementById('start-btn');
+const tirupatiBtn = document.getElementById('tirupati-btn');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const intentBtns = document.querySelectorAll('.intent-btn');
 const backBtn = document.getElementById('back-btn');
@@ -46,6 +50,19 @@ function init() {
 }
 
 function bindEvents() {
+    // New Landing Screen CTA
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            productLandingScreen.classList.remove('active');
+            templeScreen.classList.add('active');
+        });
+    }
+    if (tirupatiBtn) {
+        tirupatiBtn.addEventListener('click', () => {
+            templeScreen.classList.remove('active');
+            intentScreen.classList.add('active');
+        });
+    }
     intentBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const intent = btn.getAttribute('data-intent');
@@ -89,11 +106,11 @@ function bindEvents() {
 
 function switchScreen(screenType) {
     if (screenType === 'landing') {
-        landingScreen.classList.add('active');
+        intentScreen.classList.add('active');
         dashboardScreen.classList.remove('active');
         currentIntent = null;
     } else {
-        landingScreen.classList.remove('active');
+        intentScreen.classList.remove('active');
         dashboardScreen.classList.add('active');
     }
 }
