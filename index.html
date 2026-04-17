@@ -23,12 +23,22 @@
             <p class="subtitle" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem auto; line-height: 1.6;">
                 AI-powered guidance that helps you avoid long queues, reduce waiting time, and reach your destination faster.
             </p>
+
+            <div class="trust-badges">
+                <span class="trust-badge">🧠 AI-Powered Navigation</span>
+                <span class="trust-badge">📡 Real-Time Crowd Guidance</span>
+                <span class="trust-badge">⚡ Smart Decision System</span>
+            </div>
             
             <div class="example-box">
                 <p><strong>Real-World Impact:</strong> During peak hours, users can avoid up to 1–2 hours of waiting using smart route recommendations.</p>
             </div>
+
+            <p class="micro-explanation">Get the fastest and least crowded path instantly.</p>
             
             <button id="start-btn" class="cta-btn">Start Your Journey</button>
+
+            <p class="landing-footer">Built for high-density environments like Tirupati Temple</p>
         </div>
     </div>
 
@@ -116,6 +126,13 @@
         <div class="dashboard-content">
             <!-- Map Area -->
             <div class="map-container">
+                <div id="context-header">
+                    📍 You are navigating to: <span id="context-intent">Darshan</span>
+                    <br>
+                    📡 Crowd Mode: <span id="context-scenario">Normal</span>
+                    <div class="system-explanation">🤖 AI is guiding you based on live crowd conditions</div>
+                </div>
+
                 <div class="target-title">
                     <h2 id="current-destination">Heading to: <span>Darshan</span></h2>
                     <div id="crowd-status-indicator" class="status-badge normal">Status: Normal</div>
@@ -135,9 +152,11 @@
                 <!-- Action-Oriented Decision Panel -->
                 <div class="guidance-panel glass-panel">
                     <!-- 1. What should I do? -->
-                    <div class="action-header">
-                        <span class="action-label">Recommended Action</span>
-                        <h3 id="action-heading">Take --</h3>
+                    <div class="action-box">
+                        <div class="action-header">
+                            <span class="action-label">Recommended Action</span>
+                            <h3 id="action-heading">Take --</h3>
+                        </div>
                     </div>
 
                     <!-- 2. What am I saving? (The Deltas) -->

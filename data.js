@@ -158,95 +158,95 @@ const simulationEvents = [
     {
         type: 'alert',
         triggerScenario: 'peak',
-        message: 'Crowd increasing ahead near the transit points.',
-        insight: 'Please keep moving steadily. I am monitoring alternate paths.'
+        message: 'Crowd increasing ahead.',
+        insight: 'Stay on this route for the fastest trip.'
     },
     {
         type: 'insight',
         triggerScenario: 'peak',
-        message: 'Rerouting to avoid congestion is under analysis.',
-        insight: 'Currently, sticking to our mapped route remains your best option.'
+        message: 'Checking for better routes...',
+        insight: 'Your current path is still the best.'
     },
     {
         type: 'alert',
         triggerScenario: 'peak',
-        message: 'Surge detected in adjacent zones.',
-        insight: 'I am holding your current path, but be prepared for minor slowdowns.'
+        message: 'Crowd increasing nearby.',
+        insight: 'Stay on this route — bypassing the crowd.'
     },
     {
         type: 'insight',
         triggerScenario: 'peak',
-        message: 'Movement speed is reducing facility-wide.',
-        insight: 'Patience is advised. Do not attempt to deviate into crowded shortcuts.'
+        message: 'Crowd slowing down nearby.',
+        insight: 'Stick to the plan for a smoother trip.'
     },
     {
         type: 'alert',
         triggerScenario: 'peak',
-        message: 'High density warning at major intersections.',
-        insight: 'Your calculated path is actively avoiding the worst of these zones.'
+        message: 'Heavy crowd at intersections.',
+        insight: 'Stay on track to avoid the congestion.'
     },
 
     // NORMAL SCENARIO
     {
         type: 'success',
         triggerScenario: 'normal',
-        message: 'You are on the optimal path.',
-        insight: 'Crowd density is holding stable. You are perfectly on track.'
+        message: "You're on the best path.",
+        insight: 'Conditions stable. Keep going!'
     },
     {
         type: 'insight',
         triggerScenario: 'normal',
-        message: 'Slight crowd build-up detected in adjacent zones.',
-        insight: 'Your path is unaffected.'
+        message: 'Minor crowd increasing nearby.',
+        insight: "You're still on the fastest route."
     },
     {
         type: 'success',
         triggerScenario: 'normal',
-        message: 'Flow rate is consistent.',
-        insight: 'No adjustments needed at this time. Keep your pace.'
+        message: 'Pace looks good.',
+        insight: 'Clear path ahead. Keep going.'
     },
     {
         type: 'insight',
         triggerScenario: 'normal',
-        message: 'Predictive models show stable conditions for the next 10 minutes.',
-        insight: 'You should reach your destination without unexpected delays.'
+        message: 'Route looks clear for the next 10 min.',
+        insight: 'Expect a smooth trip to your destination.'
     },
     {
         type: 'insight',
         triggerScenario: 'normal',
-        message: 'Minor grouping ahead.',
-        insight: 'It will likely disperse by the time you reach that sector.'
+        message: 'Small crowd ahead.',
+        insight: "It should clear by the time you're there."
     },
     
     // LOW SCENARIO
     {
         type: 'success',
         triggerScenario: 'low',
-        message: 'Your route remains the most efficient option.',
-        insight: 'The path ahead is completely clear. You are making great time.'
+        message: "You're on the fastest route.",
+        insight: "Clear path! You're making great time."
     },
     {
         type: 'insight',
         triggerScenario: 'low',
-        message: 'All zones are operating well below capacity.',
-        insight: 'Feel free to maintain your current comfortable pace.'
+        message: 'Venue is quiet right now.',
+        insight: 'Enjoy the clear walk at your own pace.'
     },
     {
         type: 'success',
         triggerScenario: 'low',
-        message: 'Conditions are perfect for quick transit.',
-        insight: 'Density remains at minimal levels.'
+        message: 'Perfect conditions for travel.',
+        insight: 'Very low crowd levels ahead.'
     },
     {
         type: 'insight',
         triggerScenario: 'low',
-        message: 'No active crowd surges detected anywhere in the venue.',
-        insight: 'Your journey will be swift and uninterrupted.'
+        message: 'Everything is clear.',
+        insight: 'Expect a quick, easy trip.'
     },
     {
         type: 'success',
         triggerScenario: 'low',
-        message: 'Pathing efficiency is at maximum levels.',
-        insight: 'You are currently saving significant time compared to peak hour averages.'
+        message: 'Efficiency is at maximum.',
+        insight: "You're saving a lot of time right now."
     }
 ];

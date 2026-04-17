@@ -40,6 +40,8 @@ const chatFeed = document.getElementById('chat-feed');
 const mapNodesContainer = document.getElementById('map-nodes');
 const activeRoutePath = document.getElementById('active-route-path');
 const altRoutePath = document.getElementById('alt-route-path');
+const contextIntentEl = document.getElementById('context-intent');
+const contextScenarioEl = document.getElementById('context-scenario');
 
 // Emergency Modal Elements
 const emergencyModal = document.getElementById('emergency-modal');
@@ -102,9 +104,15 @@ function bindEvents() {
             btn.classList.add('active');
 
             currentScenario = btn.getAttribute('data-scenario');
+            
+            // Update context header
+            if (contextScenarioEl) {
+                contextScenarioEl.innerText = scenarios[currentScenario].name;
+            }
+
             if (currentIntent) {
                 // Rerun decision engine with new scenario
-                addChatMessage('Assistant', `Scenario updated to ${scenarios[currentScenario].name}. Recalculating routes...`, 'insight', 'Simulation Engine parameters modified.');
+                addChatMessage('Assistant', `Scenario updated. Finding best route...`, 'insight', 'Simulation Engine parameters modified.');
                 processIntent(currentIntent, true);
             }
         });
@@ -114,9 +122,9 @@ function bindEvents() {
     dismissEmergencyBtn.addEventListener('click', () => {
         emergencyModal.classList.add('hidden');
         if (currentIntent && currentIntent !== 'emergency') {
-            addChatMessage('System', 'Emergency protocol cleared. Resuming active guidance.', 'success');
+            addChatMessage('System', 'Emergency cleared. Resuming guidance.', 'success');
             clearInterval(currentSimInterval);
-            currentSimInterval = setInterval(simulateEvents, 12000);
+            currentSimInterval = setInterval(simulateEvents, 22000);
         }
     });
 }
@@ -278,11 +286,19 @@ function startAssistantFlow(intentKey) {
     // Reset Title
     let titleStr = intentKey.charAt(0).toUpperCase() + intentKey.slice(1);
     currentDestTitle.innerText = titleStr;
+    
+    // Update context header
+    if (contextIntentEl) {
+        contextIntentEl.innerText = titleStr;
+    }
+    if (contextScenarioEl) {
+        contextScenarioEl.innerText = scenarios[currentScenario].name;
+    }
 
     processIntent(intentKey, false);
 
     // Start simulation loop (clearInterval is handled inside switchScreen)
-    currentSimInterval = setInterval(simulateEvents, 12000); 
+    currentSimInterval = setInterval(simulateEvents, 22000); 
 }
 
 // Core Decision Engine
@@ -304,15 +320,23 @@ function processIntent(intentKey, isRecalculation = false) {
             altRoute = bestRoute;
             bestRoute = route;
             minScore = score;
-        } else if (!altRoute) {
+        } else if (!altRoute && route !== bestRoute) {
             altRoute = route;
         }
     });
 
     bestRouteState = bestRoute;
 
-    // Update UI Metrics
-    actionHeadingEl.innerText = bestRoute.name;
+    // Simplified Action Header
+    let timeDiff = altRoute ? altRoute.calculatedTime - bestRoute.calculatedTime : 0;
+    let mainActionText = `👉 Take ${bestRoute.name}`;
+    if (timeDiff > 0) {
+        mainActionText += ` <span class="benefit-highlight">— saves ${timeDiff} min</span>`;
+    }
+
+    actionHeadingEl.innerHTML = mainActionText;
+    
+    // UI Metrics (Minor data kept)
     recTimeEl.innerText = `${bestRoute.calculatedTime} min`;
     recDistEl.innerText = `${bestRoute.baseDist} m`;
     recCrowdEl.innerText = bestRoute.calculatedCrowdStatus;
@@ -321,52 +345,49 @@ function processIntent(intentKey, isRecalculation = false) {
     let reasonText = '';
 
     if (altRoute) {
-        let timeDiff = altRoute.calculatedTime - bestRoute.calculatedTime;
         let crowdDiff = altRoute.crowdRaw - bestRoute.crowdRaw;
 
         savingsHighlightEl.style.display = 'flex';
 
         if (timeDiff > 0) {
-            uiTimeSavedEl.innerText = `${timeDiff} min saved`;
+            uiTimeSavedEl.innerText = `${timeDiff}m faster`;
             uiTimeSavedEl.style.color = "var(--accent-green)";
         } else if (timeDiff === 0) {
-            uiTimeSavedEl.innerText = `Same time`;
+            uiTimeSavedEl.innerText = `Standard time`;
             uiTimeSavedEl.style.color = "var(--text-muted)";
         } else {
-            uiTimeSavedEl.innerText = `+${Math.abs(timeDiff)} min detour`;
+            uiTimeSavedEl.innerText = `Detour`;
             uiTimeSavedEl.style.color = "var(--accent-yellow)";
         }
 
-        if (crowdDiff > 0.3) {
+        if (crowdDiff > 0.1) {
             uiCrowdDiffEl.innerText = 'Avoids major crowd';
             uiCrowdDiffEl.style.color = "var(--accent-green)";
-        } else if (crowdDiff > 0.1) {
-            uiCrowdDiffEl.innerText = 'Avoids slight crowd';
-            uiCrowdDiffEl.style.color = "var(--accent-green)";
         } else if (crowdDiff < -0.1) {
-            uiCrowdDiffEl.innerText = 'Slightly more crowded';
+            uiCrowdDiffEl.innerText = 'More crowded';
             uiCrowdDiffEl.style.color = "var(--accent-yellow)";
         } else {
-            uiCrowdDiffEl.innerText = 'Similar density';
+            uiCrowdDiffEl.innerText = 'Normal density';
             uiCrowdDiffEl.style.color = "var(--text-muted)";
         }
 
+        // Simplified reasoning
         if (timeDiff > 0 && crowdDiff > 0) {
-            reasonText = `You will save ${timeDiff} minutes and avoid heavy crowd congestion by taking this route.`;
-        } else if (timeDiff > 0 && crowdDiff <= 0) {
-            reasonText = `This is the fastest path available, saving you ${timeDiff} minutes, though you may encounter some crowds.`;
-        } else if (timeDiff <= 0 && crowdDiff > 0) {
-            reasonText = `This route bypasses severe crowds. It requires ${Math.abs(timeDiff)} minutes of extra walking, but guarantees a much smoother journey.`;
+            reasonText = `This route is faster and less crowded right now.`;
+        } else if (timeDiff > 0) {
+            reasonText = `This is currently the fastest path to your destination.`;
+        } else if (crowdDiff > 0) {
+            reasonText = `Bypasses heavy crowds for a smoother journey.`;
         } else {
-            reasonText = `This remains the most direct and reliable path to your destination based on current conditions.`;
+            reasonText = `This remains the most reliable path available.`;
         }
     } else {
         savingsHighlightEl.style.display = 'none';
-        reasonText = `This is the only direct and clear route to your destination.`;
+        reasonText = `Direct path to your destination.`;
     }
 
     actionHumanReasonEl.innerText = reasonText;
-    predictiveInsightEl.innerText = bestRoute.predictionText || "No active predictions for this area.";
+    predictiveInsightEl.innerText = bestRoute.predictionText || "No active predictions.";
 
     // Update Global Badge
     crowdStatusBadge.innerText = `Crowd: ${scenarios[currentScenario].name}`;
@@ -385,37 +406,30 @@ function processIntent(intentKey, isRecalculation = false) {
 function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonText) {
     if (!isRecalculation) {
         // Step 1: Initial acknowledgment
-        addChatMessage('System', `Initiating guidance to ${currentIntent.toUpperCase()}...`, 'message');
+        addChatMessage('Assistant', `Starting guidance. Checking path...`, 'message');
 
         // Step 2: "Thinking" phase
         setTimeout(() => {
-            addChatMessage('System', `I am analyzing current crowd conditions and historical movement vectors across the venue...`, 'insight');
-        }, 1500);
+            addChatMessage('Assistant', `Checking crowd levels...`, 'insight');
+        }, 1200);
 
         // Step 3: Resolution
         setTimeout(() => {
-            addChatMessage('System', `Done. This is the optimal route for you right now.`, 'success');
-        }, 3000);
+            addChatMessage('Assistant', `Fastest route found.`, 'success');
+        }, 2500);
 
-        // Step 4: Conversational recommendation
+        // Step 4: Simple recommendation
         setTimeout(() => {
-            addChatMessage('Recommendation', `Please take ${bestRoute.name}.`, 'message', reasonText);
-        }, 4500);
-
-        // Step 5: Predictive message drop natively into chat
-        if (bestRoute.predictionText) {
-            setTimeout(() => {
-                addChatMessage('Predictive AI', bestRoute.predictionText, 'insight');
-            }, 7000);
-        }
+            addChatMessage('Recommendation', `👉 Take ${bestRoute.name}`, 'message', reasonText);
+        }, 3500);
 
     } else {
         // Rerouting logic
-        addChatMessage('System Alert', `Crowd dynamics have shifted locally. I am recalculating your path...`, 'alert');
+        addChatMessage('System Alert', `Crowd shifting. Finding new path...`, 'alert');
 
         setTimeout(() => {
-            addChatMessage('Recommendation', `Dynamic adjustment applied. New recommended route is ${bestRoute.name}.`, 'success', 'Calculated based on live scenario constraints to save time.');
-        }, 2000);
+            addChatMessage('Recommendation', `New path found! 👉 Take ${bestRoute.name}`, 'success');
+        }, 1500);
     }
 }
 
@@ -460,9 +474,16 @@ function simulateEvents() {
     let randIdx = Math.floor(Math.random() * eventOptions.length);
     let evt = eventOptions[randIdx];
 
-    lastSimMessage = evt.message;
+    // Simplify simulation messages based on provided guidelines
+    let displayMessage = evt.message;
+    if (evt.type === 'success') displayMessage = "Best path confirmed.";
+    if (evt.triggerScenario === 'peak' && evt.type === 'alert') displayMessage = "Crowd increasing nearby — stay on route.";
 
-    addChatMessage('Live Update', evt.message, evt.type, evt.insight);
+    // Prevent consecutive repetition of the same displayed message
+    if (displayMessage === lastSimMessage) return;
+    lastSimMessage = displayMessage;
+
+    addChatMessage('Live Update', displayMessage, evt.type, evt.insight);
 
     // Minor predictive time adjustment to render UI alive
     if (evt.type === 'alert' && bestRouteState) {

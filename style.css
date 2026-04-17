@@ -220,6 +220,48 @@ h1 {
     max-width: 550px;
 }
 
+.trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.trust-badge {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    opacity: 0.85;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+}
+
+.trust-badge:hover {
+    opacity: 1;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.micro-explanation {
+    font-size: 1rem;
+    color: var(--text-main);
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+}
+
+.landing-footer {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.45;
+    margin-top: 2rem;
+    letter-spacing: 0.5px;
+}
+
+
 .intent-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -400,10 +442,32 @@ h1 {
 
 /* Map Area */
 .map-container {
-    flex: 2;
+    flex: 3;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+#context-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border: 1px solid var(--glass-border);
+}
+
+#context-intent, #context-scenario {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.system-explanation {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-top: 0.4rem;
+    font-weight: 300;
+    color: var(--text-muted);
 }
 
 .target-title {
@@ -581,26 +645,44 @@ h1 {
     box-shadow: 0 -4px 20px rgba(16, 185, 129, 0.15);
 }
 
+.action-box {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 20px var(--primary-glow);
+    margin-bottom: 0.5rem;
+}
+
 .action-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.3rem;
+    gap: 0.5rem;
 }
 
 .action-label {
     text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1.5px;
-    color: var(--accent-green);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--primary);
     font-weight: 700;
+    opacity: 0.8;
 }
 
 .action-header h3 {
-    font-size: 2rem;
+    font-size: 2.8rem;
     color: #fff;
-    font-weight: 700;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 1rem 0;
+    text-shadow: 0 0 25px var(--primary-glow);
+}
+
+.benefit-highlight {
+    color: var(--accent-green);
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
 .savings-highlight {
@@ -683,22 +765,23 @@ h1 {
     justify-content: space-around;
     padding-top: 1rem;
     border-top: 1px solid var(--glass-border);
+    opacity: 0.6;
 }
 
 .route-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.2rem;
 }
 
 .route-stat span {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
 }
 
 .route-stat strong {
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 /* Assistant Sidebar */
@@ -707,6 +790,8 @@ h1 {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    opacity: 0.85;
+    background: rgba(15, 23, 42, 0.4);
 }
 
 .chat-header {
