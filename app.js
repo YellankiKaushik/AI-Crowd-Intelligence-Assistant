@@ -4,6 +4,7 @@ let currentScenario = 'low';
 let currentSimInterval = null;
 let bestRouteState = null;
 let lastSimMessage = null;
+let isTransitioning = false;
 
 
 
@@ -18,6 +19,8 @@ const tirupatiBtn = document.getElementById('tirupati-btn');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const intentBtns = document.querySelectorAll('.intent-btn');
 const backBtn = document.getElementById('back-btn');
+const templeBackBtn = document.getElementById('temple-back-btn');
+const intentBackBtn = document.getElementById('intent-back-btn');
 const scenarioBtns = document.querySelectorAll('.scenario-btn');
 const emergencyBtn = document.getElementById('emergency-btn');
 
@@ -45,6 +48,9 @@ const dismissEmergencyBtn = document.getElementById('dismiss-emergency');
 
 // Initialization
 function init() {
+    // Force initial state: only landing visible
+    switchScreen('landing', true);
+    
     bindEvents();
     drawMapNodes(); // Draw all nodes initially
 }
@@ -53,14 +59,12 @@ function bindEvents() {
     // New Landing Screen CTA
     if (startBtn) {
         startBtn.addEventListener('click', () => {
-            productLandingScreen.classList.remove('active');
-            templeScreen.classList.add('active');
+            switchScreen('temple');
         });
     }
     if (tirupatiBtn) {
         tirupatiBtn.addEventListener('click', () => {
-            templeScreen.classList.remove('active');
-            intentScreen.classList.add('active');
+            switchScreen('intent');
         });
     }
     intentBtns.forEach(btn => {
@@ -75,9 +79,22 @@ function bindEvents() {
     });
 
     backBtn.addEventListener('click', () => {
-        clearInterval(currentSimInterval);
-        switchScreen('landing');
+        currentIntent = null;
+        switchScreen('intent');
     });
+
+    if (templeBackBtn) {
+        templeBackBtn.addEventListener('click', () => {
+            switchScreen('landing');
+        });
+    }
+
+    if (intentBackBtn) {
+        intentBackBtn.addEventListener('click', () => {
+            currentIntent = null;
+            switchScreen('temple');
+        });
+    }
 
     scenarioBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -104,15 +121,78 @@ function bindEvents() {
     });
 }
 
-function switchScreen(screenType) {
-    if (screenType === 'landing') {
-        intentScreen.classList.add('active');
-        dashboardScreen.classList.remove('active');
-        currentIntent = null;
+function switchScreen(screenType, immediate = false) {
+    if (isTransitioning && !immediate) return false;
+
+    const screens = [
+        { id: 'landing', el: productLandingScreen },
+        { id: 'temple', el: templeScreen },
+        { id: 'intent', el: intentScreen },
+        { id: 'dashboard', el: dashboardScreen }
+    ];
+
+    // State isolation: Cleanup when leaving or entering specific screens
+    if (screenType === 'dashboard') {
+        clearDashboardUI();
     } else {
-        intentScreen.classList.remove('active');
-        dashboardScreen.classList.add('active');
+        // If we are moving away from dashboard, cleanup simulation
+        if (currentSimInterval) {
+            clearInterval(currentSimInterval);
+            currentSimInterval = null;
+        }
+        // Clear SVG routes to prevent flicker on next entry
+        activeRoutePath.setAttribute('d', '');
+        altRoutePath.setAttribute('d', '');
     }
+
+    if (immediate) {
+        screens.forEach(s => {
+            s.el.style.transition = 'none';
+            if (s.id === screenType) {
+                s.el.classList.add('active');
+            } else {
+                s.el.classList.remove('active');
+            }
+            // Force reflow
+            void s.el.offsetHeight;
+            s.el.style.transition = '';
+        });
+        return true;
+    }
+
+    isTransitioning = true;
+    document.body.classList.add('is-transitioning');
+
+    screens.forEach(s => {
+        if (s.id === screenType) {
+            s.el.classList.add('active');
+        } else {
+            s.el.classList.remove('active');
+        }
+    });
+
+    // Match CSS transition time
+    setTimeout(() => {
+        isTransitioning = false;
+        document.body.classList.remove('is-transitioning');
+    }, 500);
+
+    return true;
+}
+
+function clearDashboardUI() {
+    chatFeed.innerHTML = '';
+    actionHeadingEl.innerText = '--';
+    recTimeEl.innerText = '-- min';
+    recDistEl.innerText = '-- m';
+    recCrowdEl.innerText = '--';
+    recCrowdEl.className = 'crowd-val';
+    actionHumanReasonEl.innerText = '--';
+    predictiveInsightEl.innerText = '--';
+    savingsHighlightEl.style.display = 'none';
+    currentDestTitle.innerText = '--';
+    activeRoutePath.setAttribute('d', '');
+    altRoutePath.setAttribute('d', '');
 }
 
 // Draw the physical nodes on the visualization
@@ -189,22 +269,20 @@ function renderRouteLines(activeRoute, altRoute) {
     }
 }
 
-// Assistant Flow Entry Point
 function startAssistantFlow(intentKey) {
+    // Only proceed if screen switch is successful (not transitioning)
+    if (!switchScreen('dashboard')) return;
+
     currentIntent = intentKey;
-    switchScreen('dashboard');
 
-    chatFeed.innerHTML = ''; // Clear chat
-
-    // Set Title
+    // Reset Title
     let titleStr = intentKey.charAt(0).toUpperCase() + intentKey.slice(1);
     currentDestTitle.innerText = titleStr;
 
     processIntent(intentKey, false);
 
-    // Start simulation loop
-    clearInterval(currentSimInterval);
-    currentSimInterval = setInterval(simulateEvents, 12000); // Trigger an event every 12 seconds but randomizer inside will space it out naturally
+    // Start simulation loop (clearInterval is handled inside switchScreen)
+    currentSimInterval = setInterval(simulateEvents, 12000); 
 }
 
 // Core Decision Engine
