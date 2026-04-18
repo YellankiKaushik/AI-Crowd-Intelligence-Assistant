@@ -1126,11 +1126,10 @@ body.is-transitioning .screen {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    padding: 1.25rem;
-    gap: 1.25rem;
+    padding: 1.5rem;
+    gap: 1.5rem;
     overflow-y: auto;
     align-items: flex-start;
-    /* panels don't stretch to fill — they sit at top */
 }
 
 .map-container {
@@ -1138,27 +1137,26 @@ body.is-transitioning .screen {
     min-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.5rem;
 }
 
 /* 1. Context Header */
 #context-header {
-    background: rgba(15, 23, 42, 0.5);
-    padding: 0.9rem 1.25rem;
+    background: rgba(15, 23, 42, 0.35);
+    padding: 0.7rem 1.25rem;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    opacity: 1;
 }
 
 .context-main {
-    font-size: 0.92rem;
-    /* was 1.1rem — reduced, it's a label not a heading */
-    font-weight: 500;
-    color: var(--text-muted);
-    /* was text-main — lower emphasis */
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(148, 163, 184, 0.9);
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.3rem;
+    gap: 1rem;
+    margin-bottom: 0.2rem;
 }
 
 .context-divider {
@@ -1168,27 +1166,31 @@ body.is-transitioning .screen {
 
 #context-intent,
 #context-scenario {
-    color: var(--text-main);
-    /* was primary — values readable, not distracting */
-    font-weight: 600;
+    color: #e2e8f0;
+    font-weight: 700;
 }
 
 .system-explanation {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
-    opacity: 0.45;
-    /* was 0.7 — much quieter */
+    opacity: 0.35;
     font-weight: 400;
 }
 
 /* 2. Virtual Map Section — Step 1: Your Starting Point */
 .virtual-map-section {
-    padding: 1.4rem 1.5rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(59, 130, 246, 0.18);
+    padding: 1.2rem 1.5rem;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(59, 130, 246, 0.1);
     border-radius: 16px;
     position: relative;
     overflow: hidden;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.virtual-map-section:hover {
+    opacity: 1;
 }
 
 /* Subtle left accent to visually mark as "step" */
@@ -1308,74 +1310,77 @@ body.is-transitioning .screen {
 
 /* 3. CENTER: MAIN ACTION (HIGHEST PRIORITY) */
 .main-action-card {
-    padding: 2rem 2rem 1.75rem;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(59, 130, 246, 0.35);
-    /* was 2px — 1px is cleaner */
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.08) inset,
-        0 12px 40px rgba(0, 0, 0, 0.4);
-    border-radius: 16px;
+    padding: 2.5rem 2.5rem 2rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.45);
+    box-shadow:
+        0 0 0 1px rgba(59, 130, 246, 0.12) inset,
+        0 0 40px rgba(59, 130, 246, 0.08),
+        0 16px 48px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    text-align: center;
 }
 
 .action-header {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .priority-badge {
     display: inline-block;
-    padding: 0.25rem 0.65rem;
-    background: rgba(59, 130, 246, 0.15);
+    padding: 0.28rem 0.75rem;
+    background: rgba(59, 130, 246, 0.12);
     color: var(--primary);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    font-size: 0.65rem;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    font-size: 0.6rem;
     font-weight: 700;
-    letter-spacing: 1.2px;
+    letter-spacing: 1.8px;
     border-radius: 5px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     text-transform: uppercase;
+    opacity: 0.8;
 }
 
 #action-heading {
-    font-size: 2.4rem;
-    /* was 2.8rem — still dominant, less shouting */
+    font-size: clamp(2.6rem, 4vw, 3.4rem);
     font-weight: 800;
     color: #fff;
-    line-height: 1.1;
-    letter-spacing: -0.5px;
-    text-shadow: none;
-    /* removed glow — cleaner */
+    line-height: 1.05;
+    letter-spacing: -1px;
+    /* Blue text-shadow glow — links action to the route colour */
+    text-shadow: 0 0 40px rgba(59, 130, 246, 0.25);
 }
 
 .action-reasoning {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
+    padding: 0 1rem;
 }
 
 .action-reasoning p {
-    font-size: 1rem;
-    /* was 1.2rem — clear but not competing with heading */
-    color: rgba(248, 250, 252, 0.8);
-    line-height: 1.65;
+    font-size: 1.05rem;
+    color: rgba(248, 250, 252, 0.7);
+    line-height: 1.7;
 }
 
 .action-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
     align-items: stretch;
+    justify-content: center;
 }
 
 .savings-highlight {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.65rem;
 }
 
 .saving-item {
-    background: rgba(16, 185, 129, 0.08);
+    background: rgba(16, 185, 129, 0.1);
     color: var(--accent-green);
-    border: 1px solid rgba(16, 185, 129, 0.22);
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    padding: 0.65rem 1.2rem;
+    border-radius: 10px;
     font-weight: 700;
     font-size: 0.95rem;
 }
@@ -1385,60 +1390,62 @@ body.is-transitioning .screen {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    background: rgba(255, 255, 255, 0.025);
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .pred-icon {
     font-size: 1rem;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 #predictive-insight-text {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
     line-height: 1.4;
+    opacity: 0.75;
 }
 
-/* 4. Raw Stats — LOW PRIORITY: visually subordinate */
+/* 4. Raw Stats — LOW PRIORITY: barely visible unless hovered */
 .raw-stats-grid {
     display: flex;
-    gap: 1.75rem;
+    gap: 2rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    opacity: 0.32;
-    /* was 0.5 — clearly de-prioritised */
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    opacity: 0.22;
     transition: opacity 0.25s ease;
+    justify-content: center;
 }
 
 .raw-stats-grid:hover {
-    opacity: 0.75;
-    /* reveal on hover but don't dominate */
+    opacity: 0.65;
 }
 
 .stat {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    align-items: center;
+    gap: 0.2rem;
 }
 
 .stat span {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 1.5px;
     color: var(--text-muted);
 }
 
 .stat strong {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-main);
 }
 
 /* 5. Map Visual Section */
 .map-visual-section {
     padding: 1.4rem 1.5rem;
+    opacity: 0.88;
 }
 
 .target-title {
@@ -1879,4 +1886,14 @@ body.is-transitioning .screen {
     z-index: 9999;
     /* background set dynamically by JS */
     /* No transition here — rAF lerp handles smoothing */
+}
+
+/* Savings callout injected by JS inside #action-heading */
+.benefit-highlight {
+    color: var(--accent-green);
+    font-size: 0.55em;
+    font-weight: 600;
+    letter-spacing: 0;
+    opacity: 0.9;
+    vertical-align: middle;
 }
