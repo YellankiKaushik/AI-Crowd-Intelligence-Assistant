@@ -91,10 +91,11 @@ const scenarios = {
 };
 
 // Map helper to calculate actual current status based on scenario
-function getCalculatedRoutes(intentKey, scenarioKey) {
-    const routes = intentRoutes[intentKey];
+function getCalculatedRoutes(intentKey, scenarioKey, userLocation) {
+    let routes = intentRoutes[intentKey];
     if (!routes) return [];
 
+    // Filtering removed; replaced with locationBonus in scoring
     const scenario = scenarios[scenarioKey];
 
     return routes.map(r => {
@@ -124,19 +125,29 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
             }
         } else if (scenarioKey === 'normal') {
             if (r.baseCrowdLevel > 0.4) {
-                predScoreMod = 10; 
+                predScoreMod = 10;
                 predMsg = "Heavy congestion expected very soon. If you don't move now, time delays will increase drastically.";
             } else {
-                predScoreMod = -5; 
+                predScoreMod = -5;
                 predMsg = "Secondary routes will remain stable despite general venue crowding.";
             }
         } else if (scenarioKey === 'peak') {
             if (r.baseCrowdLevel > 0.4) {
-                predScoreMod = 25; 
+                predScoreMod = 25;
                 predMsg = "Extreme congestion ahead. Taking the alternative path is strongly recommended.";
             } else {
-                predScoreMod = -10; 
+                predScoreMod = -10;
                 predMsg = "Crowds are peaking. This route bypasses the worst congestion safely.";
+            }
+        }
+
+        let locBonus = 0;
+        if (userLocation) {
+            const normalizedLocation = userLocation.toLowerCase().replace(/\s+/g, '_');
+            if (r.path.includes(normalizedLocation)) {
+                locBonus = -20;
+            } else {
+                locBonus = 20;
             }
         }
 
@@ -147,7 +158,8 @@ function getCalculatedRoutes(intentKey, scenarioKey) {
             calculatedCrowdClass: crowdClass,
             crowdRaw: crowdLevel,
             predictionMod: predScoreMod,
-            predictionText: predMsg
+            predictionText: predMsg,
+            locationBonus: locBonus
         };
     });
 }
@@ -217,7 +229,7 @@ const simulationEvents = [
         message: 'Small crowd ahead.',
         insight: "It should clear by the time you're there."
     },
-    
+
     // LOW SCENARIO
     {
         type: 'success',

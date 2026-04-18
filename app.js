@@ -5,6 +5,7 @@ let currentSimInterval = null;
 let bestRouteState = null;
 let lastSimMessage = null;
 let isTransitioning = false;
+let currentLocation = null;
 
 
 
@@ -143,6 +144,54 @@ function bindEvents() {
             currentSimInterval = setInterval(simulateEvents, 22000);
         }
     });
+
+    // User Location Input logic (UI only)
+    const locationInput = document.getElementById('user-location-input');
+    const locationDisplay = document.getElementById('current-location-val');
+
+    if (locationInput && locationDisplay) {
+        locationInput.addEventListener('input', (e) => {
+            locationDisplay.innerText = e.target.value || '--';
+        });
+
+        // Feedback when user enters location
+        locationInput.addEventListener('change', (e) => {
+            if (e.target.value.trim()) {
+                currentLocation = e.target.value.trim();
+                addChatMessage('Assistant', `📍 Using your location (${e.target.value}) to guide you better`, 'insight');
+                // Recalculate route with updated location context
+                if (currentIntent) {
+                    processIntent(currentIntent, true);
+                }
+            }
+        });
+
+        // Virtual Map interaction logic
+        const mapLabels = document.querySelectorAll('.map-label');
+        mapLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                // Clear previous selection highlight
+                mapLabels.forEach(l => l.classList.remove('selected-label', 'highlight-label'));
+
+                // Add highlight to current
+                label.classList.add('selected-label');
+
+                const loc = label.innerText.trim();
+                currentLocation = loc;
+                locationInput.value = loc;
+                locationDisplay.innerText = loc;
+                addChatMessage('Assistant', `📍 Selected ${loc} from map`, 'success');
+
+                // Trigger any existing input listeners
+                locationInput.dispatchEvent(new Event('input'));
+
+                // Recalculate route with updated location context
+                if (currentIntent) {
+                    processIntent(currentIntent, true);
+                }
+            });
+        });
+    }
 }
 
 function switchScreen(screenType, immediate = false) {
@@ -252,52 +301,66 @@ function drawMapNodes() {
 
 // Draw SVG Paths connecting nodes
 function renderRouteLines(activeRoute, altRoute) {
-    // Helper to generate SVG path string from route nodes
-    const getPathString = (route) => {
-        let pathStr = '';
-        route.path.forEach((nodeId, index) => {
-            const node = mapNodes[nodeId];
-            if (index === 0) pathStr += `M ${node.x} ${node.y} `;
-            else pathStr += `L ${node.x} ${node.y} `;
-        });
-        return pathStr;
-    };
+    try {
+        console.log("Route passed:", activeRoute);
+        if (activeRoute) {
+            console.log("Route path:", activeRoute.path);
+        }
 
-    if (activeRoute) {
-        // Since SVG viewbox is 0 0 100 100, and node percentages map to it
-        // Wait, SVG paths need absolute/relative coords matching viewBox.
-        // Let's set viewBox on SVG dynamically if needed.
-        const svgElement = document.getElementById('route-svg');
-        svgElement.setAttribute('viewBox', '0 0 100 100');
-        svgElement.setAttribute('preserveAspectRatio', 'none');
+        // Helper to generate SVG path string from route nodes
+        const getPathString = (route) => {
+            let pathStr = '';
+            let validIndex = 0;
+            for (let i = 0; i < route.path.length; i++) {
+                const nodeId = route.path[i];
+                const node = mapNodes[nodeId];
+                if (!node) continue;
 
-        activeRoutePath.setAttribute('d', getPathString(activeRoute));
-    } else {
-        activeRoutePath.setAttribute('d', '');
-    }
+                if (validIndex === 0) pathStr += `M ${node.x} ${node.y} `;
+                else pathStr += `L ${node.x} ${node.y} `;
 
-    if (altRoute) {
-        altRoutePath.setAttribute('d', getPathString(altRoute));
-    } else {
-        altRoutePath.setAttribute('d', '');
-    }
-
-    // Highlight active nodes in DOM
-    document.querySelectorAll('.map-node').forEach(node => {
-        node.classList.remove('active');
-        node.classList.remove('destination');
-    });
-
-    if (activeRoute) {
-        activeRoute.path.forEach((nodeId, index) => {
-            const el = document.getElementById(`node-${nodeId}`);
-            if (el) {
-                el.classList.add('active');
-                if (index === activeRoute.path.length - 1) {
-                    el.classList.add('destination');
-                }
+                validIndex++;
             }
+            return pathStr;
+        };
+
+        if (activeRoute) {
+            const svgElement = document.getElementById('route-svg');
+            svgElement.setAttribute('viewBox', '0 0 100 100');
+            svgElement.setAttribute('preserveAspectRatio', 'none');
+
+            activeRoutePath.setAttribute('d', getPathString(activeRoute));
+        } else {
+            activeRoutePath.setAttribute('d', '');
+        }
+
+        if (altRoute) {
+            altRoutePath.setAttribute('d', getPathString(altRoute));
+        } else {
+            altRoutePath.setAttribute('d', '');
+        }
+
+        // Highlight active nodes in DOM
+        document.querySelectorAll('.map-node').forEach(node => {
+            node.classList.remove('active');
+            node.classList.remove('destination');
         });
+
+        if (activeRoute) {
+            activeRoute.path.forEach((nodeId, index) => {
+                const el = document.getElementById(`node-${nodeId}`);
+                if (el) {
+                    el.classList.add('active');
+                    if (index === activeRoute.path.length - 1) {
+                        el.classList.add('destination');
+                    }
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error Message:", error.message);
+        console.error("Stack Trace:", error.stack);
+        console.error("Error Route Data:", activeRoute);
     }
 }
 
@@ -327,7 +390,7 @@ function startAssistantFlow(intentKey) {
 
 // Core Decision Engine
 function processIntent(intentKey, isRecalculation = false) {
-    const routes = getCalculatedRoutes(intentKey, currentScenario);
+    const routes = getCalculatedRoutes(intentKey, currentScenario, currentLocation);
 
     if (routes.length === 0) return;
 
@@ -338,8 +401,8 @@ function processIntent(intentKey, isRecalculation = false) {
     let minScore = Infinity;
 
     routes.forEach(route => {
-        // Score = Time + (Crowd % * Time penalty factor) + prediction modifier
-        let score = route.calculatedTime + (route.crowdRaw * 30) + (route.predictionMod || 0);
+        // Score = Time + (Crowd % * Time penalty factor) + prediction modifier + locationBonus
+        let score = route.calculatedTime + (route.crowdRaw * 30) + (route.predictionMod || 0) + (route.locationBonus || 0);
         if (score < minScore) {
             altRoute = bestRoute;
             bestRoute = route;
@@ -479,43 +542,6 @@ function addChatMessage(sender, text, msgClass, reasonText = '') {
     `;
 
     chatFeed.appendChild(msgDiv);
-
-    // User Location Input logic (UI only)
-    const locationInput = document.getElementById('user-location-input');
-    const locationDisplay = document.getElementById('current-location-val');
-
-    if (locationInput && locationDisplay) {
-        locationInput.addEventListener('input', (e) => {
-            locationDisplay.innerText = e.target.value || '--';
-        });
-
-        // Feedback when user enters location
-        locationInput.addEventListener('change', (e) => {
-            if (e.target.value.trim()) {
-                addChatMessage('Assistant', `📍 Using your location (${e.target.value}) to guide you better`, 'insight');
-            }
-        });
-
-        // Virtual Map interaction logic
-        const mapLabels = document.querySelectorAll('.map-label');
-        mapLabels.forEach(label => {
-            label.addEventListener('click', () => {
-                // Clear previous selection highlight
-                mapLabels.forEach(l => l.classList.remove('selected-label', 'highlight-label'));
-
-                // Add highlight to current
-                label.classList.add('selected-label');
-
-                const loc = label.innerText.trim();
-                locationInput.value = loc;
-                locationDisplay.innerText = loc;
-                addChatMessage('Assistant', `📍 Selected ${loc} from map`, 'success');
-
-                // Trigger any existing input listeners
-                locationInput.dispatchEvent(new Event('input'));
-            });
-        });
-    }
 
     // Auto scroll
     chatFeed.scrollTop = chatFeed.scrollHeight;
