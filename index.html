@@ -14,92 +14,156 @@
 <body>
 
     <!-- New Product Landing Screen -->
-    <div id="landing-screen" class="screen full-page-center active">
-        <div class="glass-card welcome-card landing-card">
-            <div class="logo-container">
-                <div class="ai-icon pulse">AI</div>
+    <div id="landing-screen" class="screen active">
+        <!-- Section 1: Hero (FULL SCREEN) -->
+        <section class="landing-hero-section">
+            <div class="hero-content">
+                <div class="logo-container">
+                    <div class="ai-icon pulse">AI</div>
+                </div>
+                <h1 class="hero-title">Navigate Crowded Temples with <span class="highlight">Intelligence</span></h1>
+                <p class="hero-subtitle">Real-time AI guidance to bypass queues and reach your destination faster.</p>
+                <p class="hero-how-to">Select destination &nbsp;·&nbsp; Follow smart routing &nbsp;·&nbsp; Save time</p>
+                <button id="start-btn" class="cta-btn main-cta">Start Your Journey</button>
             </div>
-            <h1 style="font-size: 3rem; line-height: 1.2; margin-bottom: 1rem;">Navigate Crowded Temples Without <span class="highlight">Confusion</span></h1>
-            <p class="subtitle" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem auto; line-height: 1.6;">
-                AI-powered guidance that helps you avoid long queues, reduce waiting time, and reach your destination faster.
-            </p>
-
-            <div class="trust-badges">
-                <span class="trust-badge">🧠 AI-Powered Navigation</span>
-                <span class="trust-badge">📡 Real-Time Crowd Guidance</span>
-                <span class="trust-badge">⚡ Smart Decision System</span>
+            <div class="scroll-indicator">
+                <span>Explore How It Works</span>
+                <div class="arrow-down"></div>
             </div>
-            
-            <div class="example-box">
-                <p><strong>Real-World Impact:</strong> During peak hours, users can avoid up to 1–2 hours of waiting using smart route recommendations.</p>
+        </section>
+
+        <!-- Section 2: Trust Layer -->
+        <section class="trust-layer-section">
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-icon">🧠</div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced neural routing optimized for high-density crowds.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">📡</div>
+                    <h3>Real-Time Guidance</h3>
+                    <p>Live sensors and data feeds processed every few seconds.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">⚡</div>
+                    <h3>Smart Routing</h3>
+                    <p>Dynamic pathfinding that adapts to shifting crowd patterns.</p>
+                </div>
             </div>
+        </section>
 
-            <p class="micro-explanation">Get the fastest and least crowded path instantly.</p>
-            
-            <button id="start-btn" class="cta-btn">Start Your Journey</button>
+        <!-- Section 3: How It Works -->
+        <section class="how-it-works-section">
+            <div class="section-container">
+                <h2 class="section-title">Seamlessly Simple</h2>
+                <div class="steps-cards-grid">
+                    <div class="step-card" data-step="01">
+                        <div class="step-number">01</div>
+                        <h3>Choose Destination</h3>
+                        <p>Tell the AI where you want to go—Darshan, Food, or Exit.</p>
+                    </div>
+                    <div class="step-card" data-step="02">
+                        <div class="step-number">02</div>
+                        <h3>Get Smart Path</h3>
+                        <p>Our engine calculates the fastest route based on current density.</p>
+                    </div>
+                    <div class="step-card" data-step="03">
+                        <div class="step-number">03</div>
+                        <h3>Follow Guidance</h3>
+                        <p>Live, turn-by-turn instructions keep you moving through the crowd.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <p class="landing-footer">Built for high-density environments like Tirupati Temple</p>
-        </div>
+        <!-- Section 4: Example Use Case -->
+        <section class="example-use-case-section">
+            <div class="example-container">
+                <div class="example-text">
+                    <span class="badge">Real-World Scenario</span>
+                    <h2>From Queue to Destination</h2>
+                    <p>"You are at Gate A. The main path is congested with a 45-minute wait. The AI identifies a clear
+                        bypass through the South Corridor, getting you to Darshan in just 12 minutes."</p>
+                </div>
+                <div class="example-visual">
+                    <div class="visual-mock">
+                        <div class="mock-line"></div>
+                        <div class="mock-line highlight"></div>
+                        <div class="mock-line"></div>
+                        <div class="mock-ai-label">Fastest Path Found</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Final CTA -->
+        <section class="final-cta-section">
+            <div class="cta-container">
+                <h2>Ready for a smoother journey?</h2>
+                <p>Join thousands of users navigating smarter today.</p>
+                <button id="start-btn-footer" class="cta-btn secondary-cta">Launch Assistant</button>
+            </div>
+            <footer class="minimal-footer">
+                <p>&copy; 2024 AI Crowd Intelligence Assistant. Built for Tirupati Temple.</p>
+            </footer>
+        </section>
     </div>
 
     <!-- Temple Selection Screen -->
     <div id="temple-screen" class="screen full-page-center">
-        <div class="glass-card welcome-card">
-            <div class="logo-container">
-                <div class="ai-icon">AI</div>
-            </div>
-            <h1>Select Temple</h1>
-            <p class="subtitle">Choose a temple to begin your journey</p>
+        <button id="temple-back-btn" class="back-link-btn">
+            <span class="back-icon">←</span> Back
+        </button>
 
-            <button id="temple-back-btn" class="back-link-btn">
-                <span class="back-icon">←</span> Back
+        <div class="logo-container">
+            <div class="ai-icon">AI</div>
+        </div>
+        <h1>Select Temple</h1>
+        <p class="subtitle">Choose a temple to begin your journey</p>
+
+        <div class="intent-grid">
+            <button id="tirupati-btn" class="intent-btn">
+                <span class="icon">🏛️</span>
+                <span class="text">Tirupati</span>
             </button>
-
-            <div class="intent-grid">
-                <button id="tirupati-btn" class="intent-btn">
-                    <span class="icon">🏛️</span>
-                    <span class="text">Tirupati</span>
-                </button>
-                <button class="intent-btn disabled" disabled title="Coming soon">
-                    <span class="icon">🏛️</span>
-                    <span class="text">Coming Soon</span>
-                </button>
-            </div>
+            <button class="intent-btn disabled" disabled title="Coming soon">
+                <span class="icon">🏛️</span>
+                <span class="text">Coming Soon</span>
+            </button>
         </div>
     </div>
 
     <!-- Intent Selection Screen -->
     <div id="intent-screen" class="screen full-page-center">
-        <div class="glass-card welcome-card">
-            <div class="logo-container">
-                <div class="pulse-ring"></div>
-                <div class="ai-icon">AI</div>
-            </div>
-            <h1>Crowd Intelligence <span class="highlight">Assistant</span></h1>
-            <p class="subtitle">Where are you heading today?</p>
+        <button id="intent-back-btn" class="back-link-btn">
+            <span class="back-icon">←</span> Back
+        </button>
 
-            <button id="intent-back-btn" class="back-link-btn">
-                <span class="back-icon">←</span> Back
+        <div class="logo-container">
+            <div class="pulse-ring"></div>
+            <div class="ai-icon">AI</div>
+        </div>
+        <h1>Crowd Intelligence <span class="highlight">Assistant</span></h1>
+        <p class="subtitle">Where are you heading today?</p>
+
+        <div class="intent-grid">
+            <button class="intent-btn" data-intent="darshan">
+                <span class="icon">🙏</span>
+                <span class="text">Go for Darshan</span>
             </button>
-
-            <div class="intent-grid">
-                <button class="intent-btn" data-intent="darshan">
-                    <span class="icon">🙏</span>
-                    <span class="text">Go for Darshan</span>
-                </button>
-                <button class="intent-btn" data-intent="food">
-                    <span class="icon">🍱</span>
-                    <span class="text">Find Food</span>
-                </button>
-                <button class="intent-btn" data-intent="exit">
-                    <span class="icon">🚪</span>
-                    <span class="text">Find Exit</span>
-                </button>
-                <button class="intent-btn emergency-intent" data-intent="emergency">
-                    <span class="icon">⚠️</span>
-                    <span class="text">Emergency</span>
-                </button>
-            </div>
+            <button class="intent-btn" data-intent="food">
+                <span class="icon">🍱</span>
+                <span class="text">Find Food</span>
+            </button>
+            <button class="intent-btn" data-intent="exit">
+                <span class="icon">🚪</span>
+                <span class="text">Find Exit</span>
+            </button>
+            <button class="intent-btn emergency-intent" data-intent="emergency">
+                <span class="icon">⚠️</span>
+                <span class="text">Emergency</span>
+            </button>
         </div>
     </div>
 
@@ -109,8 +173,9 @@
         <!-- Top Control Bar -->
         <header class="top-bar glass-panel">
             <div class="branding" id="back-btn">
+                <span class="back-icon">←</span>
                 <div class="ai-icon small">AI</div>
-                <span>Assistant</span>
+                <span>Back</span>
             </div>
 
             <div class="scenario-controls">
@@ -124,89 +189,101 @@
         </header>
 
         <div class="dashboard-content">
-            <!-- Map Area -->
+            <!-- Main Content Area (Guidance & Map) -->
             <div class="map-container">
-                <div id="context-header">
-                    📍 You are navigating to: <span id="context-intent">Darshan</span>
-                    <br>
-                    📡 Crowd Mode: <span id="context-scenario">Normal</span>
-                    <div class="system-explanation">🤖 AI is guiding you based on live crowd conditions</div>
+
+                <!-- TOP: Context & Scenario -->
+                <div id="context-header" class="glass-panel">
+                    <div class="context-main">
+                        📍 Navigating to: <span id="context-intent">Darshan</span>
+                        <span class="context-divider">|</span>
+                        📡 Crowd Mode: <span id="context-scenario">Normal</span>
+                    </div>
+                    <div class="system-explanation">🤖 AI is optimizing your route based on live conditions</div>
                 </div>
 
-                <div class="target-title">
-                    <h2 id="current-destination">Heading to: <span>Darshan</span></h2>
-                    <div id="crowd-status-indicator" class="status-badge normal">Status: Normal</div>
+                <!-- NEXT: Virtual Map (Starting Point) -->
+                <div class="virtual-map-section glass-panel">
+                    <div class="section-label">1. SELECT YOUR LOCATION</div>
+                    <div id="virtual-map" class="map-layout-grid">
+                        <div class="map-label">Gate A</div>
+                        <div class="map-label">Gate B</div>
+                        <div class="map-label highlight-label">Darshan</div>
+                        <div class="map-label">Food Court</div>
+                        <div class="map-label">Exit</div>
+                    </div>
+                    <div class="location-input-minimal">
+                        <div class="location-display">📍 Currently at: <span id="current-location-val">--</span></div>
+                        <input type="text" id="user-location-input" placeholder="Or type location...">
+                    </div>
                 </div>
 
-                <div class="map-visual glass-panel">
-                    <!-- SVG for drawing route lines -->
-                    <svg id="route-svg" class="route-svg" xmlns="http://www.w3.org/2000/svg">
-                        <path id="active-route-path" d="" class="route-line" />
-                        <path id="alt-route-path" d="" class="route-line alt" />
-                    </svg>
-
-                    <!-- Rendered nodes will be injected here via JS -->
-                    <div id="map-nodes"></div>
-                </div>
-
-                <!-- Action-Oriented Decision Panel -->
-                <div class="guidance-panel glass-panel">
-                    <!-- 1. What should I do? -->
-                    <div class="action-box">
-                        <div class="action-header">
-                            <span class="action-label">Recommended Action</span>
-                            <h3 id="action-heading">Take --</h3>
-                        </div>
+                <!-- CENTER: MAIN ACTION (HIGHEST PRIORITY) -->
+                <div class="guidance-panel main-action-card glass-panel">
+                    <div class="action-header">
+                        <span class="priority-badge">RECOMMENDED ACTION</span>
+                        <h2 id="action-heading">Take --</h2>
                     </div>
 
-                    <!-- 2. What am I saving? (The Deltas) -->
-                    <div class="savings-highlight" id="savings-highlight">
-                        <div class="saving-item time">
-                            <span>Time Strategy</span>
-                            <strong id="ui-time-saved">-- min</strong>
-                        </div>
-                        <div class="saving-item crowd">
-                            <span>Crowd Impact</span>
-                            <strong id="ui-crowd-diff">--</strong>
-                        </div>
-                    </div>
-
-                    <!-- 3. Why? (Human Reason) -->
                     <div class="action-reasoning">
                         <p id="action-human-reason">--</p>
                     </div>
 
-                    <!-- Predictive Insight -->
-                    <div class="predictive-box">
-                        <span class="pred-icon">🔮</span>
-                        <div class="pred-content">
-                            <strong>Predictive Insight:</strong>
+                    <div class="action-meta">
+                        <!-- Delta Savings -->
+                        <div class="savings-highlight" id="savings-highlight">
+                            <div class="saving-item">
+                                <span id="ui-time-saved">-- min</span>
+                            </div>
+                            <div class="saving-item">
+                                <span id="ui-crowd-diff">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Predictive Insight -->
+                        <div class="predictive-box">
+                            <span class="pred-icon">🔮</span>
                             <p id="predictive-insight-text">--</p>
                         </div>
                     </div>
 
-                    <!-- 4. Raw Stats -->
-                    <div class="route-details-sub">
-                        <div class="route-stat">
-                            <span>Total Time</span>
-                            <strong id="rec-time">-- min</strong>
+                    <!-- LOW PRIORITY: Raw Stats -->
+                    <div class="raw-stats-grid">
+                        <div class="stat">
+                            <span>Time</span>
+                            <strong id="rec-time">--</strong>
                         </div>
-                        <div class="route-stat">
-                            <span>Distance</span>
-                            <strong id="rec-dist">-- m</strong>
+                        <div class="stat">
+                            <span>Dist</span>
+                            <strong id="rec-dist">--</strong>
                         </div>
-                        <div class="route-stat">
-                            <span>Average Crowd</span>
+                        <div class="stat">
+                            <span>Crowd</span>
                             <strong id="rec-crowd" class="crowd-val">--</strong>
                         </div>
                     </div>
                 </div>
+
+                <!-- BELOW: Map Visual -->
+                <div class="map-visual-section glass-panel">
+                    <div class="target-title">
+                        <h2 id="current-destination">Route View: <span>Darshan</span></h2>
+                        <div id="crowd-status-indicator" class="status-badge normal">Normal</div>
+                    </div>
+                    <div class="map-visual">
+                        <svg id="route-svg" class="route-svg" xmlns="http://www.w3.org/2000/svg">
+                            <path id="active-route-path" d="" class="route-line" />
+                            <path id="alt-route-path" d="" class="route-line alt" />
+                        </svg>
+                        <div id="map-nodes"></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Assistant Sidebar -->
+            <!-- Assistant Sidebar (Live Chat) -->
             <div class="assistant-panel glass-panel">
                 <div class="chat-header">
-                    <h3>Live Guidance</h3>
+                    <h3>Live Updates</h3>
                     <div class="live-indicator">
                         <div class="dot blinking"></div>
                         <span>Live</span>
@@ -217,11 +294,7 @@
                     <!-- Messages will be dynamically added here -->
                 </div>
             </div>
-
-
-
         </div>
-
     </div>
 
     <!-- Emergency Modal -->
@@ -241,6 +314,38 @@
 
     <script src="data.js"></script>
     <script src="app.js"></script>
+
+    <!-- Mouse-follow glow overlay -->
+    <div id="cursor-glow" aria-hidden="true"></div>
+
+    <script>
+        (function () {
+            const glow = document.getElementById('cursor-glow');
+            let raf = null;
+            let tx = window.innerWidth / 2;
+            let ty = window.innerHeight / 2;
+            // Current rendered position — lerped toward target each frame
+            let cx = tx;
+            let cy = ty;
+
+            document.addEventListener('mousemove', function (e) {
+                tx = e.clientX;
+                ty = e.clientY;
+            });
+
+            function tick() {
+                // Ease toward cursor (0.08 = gentle lag, keeps it feeling effortless)
+                cx += (tx - cx) * 0.08;
+                cy += (ty - cy) * 0.08;
+                glow.style.background =
+                    'radial-gradient(600px circle at ' + cx + 'px ' + cy + 'px, ' +
+                    'rgba(59,130,246,0.07) 0%, transparent 70%)';
+                raf = requestAnimationFrame(tick);
+            }
+
+            tick();
+        })();
+    </script>
 </body>
 
 </html>

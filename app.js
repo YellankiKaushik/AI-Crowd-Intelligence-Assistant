@@ -15,6 +15,7 @@ const productLandingScreen = document.getElementById('landing-screen');
 const templeScreen = document.getElementById('temple-screen');
 const intentScreen = document.getElementById('intent-screen');
 const startBtn = document.getElementById('start-btn');
+const startBtnFooter = document.getElementById('start-btn-footer');
 const tirupatiBtn = document.getElementById('tirupati-btn');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const intentBtns = document.querySelectorAll('.intent-btn');
@@ -52,7 +53,7 @@ const dismissEmergencyBtn = document.getElementById('dismiss-emergency');
 function init() {
     // Force initial state: only landing visible
     switchScreen('landing', true);
-    
+
     bindEvents();
     drawMapNodes(); // Draw all nodes initially
 }
@@ -61,6 +62,11 @@ function bindEvents() {
     // New Landing Screen CTA
     if (startBtn) {
         startBtn.addEventListener('click', () => {
+            switchScreen('temple');
+        });
+    }
+    if (startBtnFooter) {
+        startBtnFooter.addEventListener('click', () => {
             switchScreen('temple');
         });
     }
@@ -100,11 +106,21 @@ function bindEvents() {
 
     scenarioBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
+            if (isTransitioning) return;
+
             scenarioBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             currentScenario = btn.getAttribute('data-scenario');
-            
+
+            // Reset state for new scenario
+            chatFeed.innerHTML = '';
+            lastSimMessage = null;
+
+            // Restart simulation interval
+            clearInterval(currentSimInterval);
+            currentSimInterval = setInterval(simulateEvents, 22000);
+
             // Update context header
             if (contextScenarioEl) {
                 contextScenarioEl.innerText = scenarios[currentScenario].name;
@@ -112,7 +128,7 @@ function bindEvents() {
 
             if (currentIntent) {
                 // Rerun decision engine with new scenario
-                addChatMessage('Assistant', `Scenario updated. Finding best route...`, 'insight', 'Simulation Engine parameters modified.');
+                addChatMessage('Assistant', `🔄 Scenario updated. Recalculating best route...`, 'insight');
                 processIntent(currentIntent, true);
             }
         });
@@ -152,6 +168,14 @@ function switchScreen(screenType, immediate = false) {
         activeRoutePath.setAttribute('d', '');
         altRoutePath.setAttribute('d', '');
     }
+
+    // Reset scroll position on every screen change.
+    // window.scrollTo covers the page body (landing's multi-section scroll).
+    // The incoming screen element's scrollTop covers any internal overflow panels
+    // (e.g. the dashboard's scrollable content area).
+    const incomingScreen = screens.find(s => s.id === screenType);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (incomingScreen) incomingScreen.el.scrollTop = 0;
 
     if (immediate) {
         screens.forEach(s => {
@@ -286,7 +310,7 @@ function startAssistantFlow(intentKey) {
     // Reset Title
     let titleStr = intentKey.charAt(0).toUpperCase() + intentKey.slice(1);
     currentDestTitle.innerText = titleStr;
-    
+
     // Update context header
     if (contextIntentEl) {
         contextIntentEl.innerText = titleStr;
@@ -298,7 +322,7 @@ function startAssistantFlow(intentKey) {
     processIntent(intentKey, false);
 
     // Start simulation loop (clearInterval is handled inside switchScreen)
-    currentSimInterval = setInterval(simulateEvents, 22000); 
+    currentSimInterval = setInterval(simulateEvents, 22000);
 }
 
 // Core Decision Engine
@@ -335,7 +359,7 @@ function processIntent(intentKey, isRecalculation = false) {
     }
 
     actionHeadingEl.innerHTML = mainActionText;
-    
+
     // UI Metrics (Minor data kept)
     recTimeEl.innerText = `${bestRoute.calculatedTime} min`;
     recDistEl.innerText = `${bestRoute.baseDist} m`;
@@ -384,6 +408,11 @@ function processIntent(intentKey, isRecalculation = false) {
     } else {
         savingsHighlightEl.style.display = 'none';
         reasonText = `Direct path to your destination.`;
+    }
+
+    const userLoc = document.getElementById('user-location-input')?.value;
+    if (userLoc) {
+        reasonText += ` (Based on your current location: ${userLoc})`;
     }
 
     actionHumanReasonEl.innerText = reasonText;
@@ -450,6 +479,43 @@ function addChatMessage(sender, text, msgClass, reasonText = '') {
     `;
 
     chatFeed.appendChild(msgDiv);
+
+    // User Location Input logic (UI only)
+    const locationInput = document.getElementById('user-location-input');
+    const locationDisplay = document.getElementById('current-location-val');
+
+    if (locationInput && locationDisplay) {
+        locationInput.addEventListener('input', (e) => {
+            locationDisplay.innerText = e.target.value || '--';
+        });
+
+        // Feedback when user enters location
+        locationInput.addEventListener('change', (e) => {
+            if (e.target.value.trim()) {
+                addChatMessage('Assistant', `📍 Using your location (${e.target.value}) to guide you better`, 'insight');
+            }
+        });
+
+        // Virtual Map interaction logic
+        const mapLabels = document.querySelectorAll('.map-label');
+        mapLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                // Clear previous selection highlight
+                mapLabels.forEach(l => l.classList.remove('selected-label', 'highlight-label'));
+
+                // Add highlight to current
+                label.classList.add('selected-label');
+
+                const loc = label.innerText.trim();
+                locationInput.value = loc;
+                locationDisplay.innerText = loc;
+                addChatMessage('Assistant', `📍 Selected ${loc} from map`, 'success');
+
+                // Trigger any existing input listeners
+                locationInput.dispatchEvent(new Event('input'));
+            });
+        });
+    }
 
     // Auto scroll
     chatFeed.scrollTop = chatFeed.scrollHeight;
