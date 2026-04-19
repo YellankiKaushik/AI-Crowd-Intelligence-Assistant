@@ -1,12 +1,19 @@
 export default async function handler(req, res) {
   try {
-    const { route, scenario, time } = req.body;
+    const { route, scenario, time, lang } = req.body;
+
+    const languageMap = {
+      en: "English",
+      hi: "Hindi",
+      te: "Telugu"
+    };
 
     const prompt = `
-    Explain why this route is best:
+    Explain why this route is best.
     Route: ${route}
     Time: ${time} minutes
     Crowd: ${scenario}
+    Respond in ${languageMap[lang] || "English"}.
     Keep it short and helpful.
     `;
 

@@ -149,7 +149,8 @@ function getCalculatedRoutes(intentKey, scenarioKey, userLocation) {
               "Waiting Hall 1": "hall_1",
               "Waiting Hall 2": "hall_2",
               "Food Court": "food_court",
-              "Darshan": "darshan_point"
+              "Darshan": "darshan_point",
+              "Exit": "exit_1"
             };
             const nodeId = locationMap[userLocation];
             if (nodeId && r.path.includes(nodeId)) {

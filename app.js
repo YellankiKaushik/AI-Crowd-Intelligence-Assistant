@@ -8,6 +8,7 @@ let isTransitioning = false;
 let currentLocation = null;
 let currentLang = 'en';
 let activeTimeouts = [];
+let aiRequestId = 0;
 
 const allowedLocations = [
     "Gate A",
@@ -409,7 +410,7 @@ function bindEvents() {
             // Auto-refresh dashboard and chat for language consistency
             if (currentIntent) {
                 chatFeed.innerHTML = '';
-                processIntent(currentIntent, true);
+                processIntent(currentIntent, true, true);
             }
         });
     }
@@ -766,7 +767,7 @@ function startAssistantFlow(intentKey) {
 }
 
 // Core Decision Engine
-function processIntent(intentKey, isRecalculation = false) {
+function processIntent(intentKey, isRecalculation = false, skipAI = false) {
     const routes = getCalculatedRoutes(intentKey, currentScenario, currentLocation);
 
     if (routes.length === 0) return;
@@ -871,10 +872,16 @@ function processIntent(intentKey, isRecalculation = false) {
     // Provide Assistant Messaging
     generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonText);
 
-    // Add AI explanation
-    getAIExplanation(bestRoute, currentScenario).then((explanation) => {
-        addChatMessage("assistant", explanation, "insight");
-    });
+    // Add AI explanation (guarded)
+    if (!skipAI) {
+        const requestId = ++aiRequestId;
+
+        getAIExplanation(bestRoute, currentScenario).then((explanation) => {
+            if (requestId !== aiRequestId) return; // ignore stale responses
+            if (!currentIntent) return; // user navigated away
+            addChatMessage(t('Assistant'), explanation, "insight");
+        });
+    }
 }
 
 function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonText) {
@@ -993,7 +1000,8 @@ async function getAIExplanation(route, scenario) {
             body: JSON.stringify({
                 route: route.name,
                 scenario: scenario,
-                time: route.calculatedTime
+                time: route.calculatedTime,
+                lang: currentLang
             })
         });
 
