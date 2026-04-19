@@ -7,6 +7,22 @@ let lastSimMessage = null;
 let isTransitioning = false;
 let currentLocation = null;
 let currentLang = 'en';
+let activeTimeouts = [];
+
+const allowedLocations = [
+    "Gate A",
+    "Gate B",
+    "Waiting Hall 1",
+    "Waiting Hall 2",
+    "Food Court",
+    "Darshan",
+    "Exit"
+];
+
+function clearAllTimeouts() {
+    activeTimeouts.forEach(clearTimeout);
+    activeTimeouts = [];
+}
 
 const translations = {
   "en": {
@@ -349,7 +365,8 @@ const scenarioBtns = document.querySelectorAll('.scenario-btn');
 const emergencyBtn = document.getElementById('emergency-btn');
 
 // Dashboard UI Elements
-const currentDestTitle = document.getElementById('current-destination').querySelector('span');
+const currentDestEl = document.getElementById('current-destination');
+const currentDestTitle = currentDestEl ? currentDestEl.querySelector('span') : null;
 const crowdStatusBadge = document.getElementById('crowd-status-indicator');
 const actionHeadingEl = document.getElementById('action-heading');
 const actionHumanReasonEl = document.getElementById('action-human-reason');
@@ -388,6 +405,12 @@ function bindEvents() {
         langSwitch.addEventListener('change', (e) => {
             currentLang = e.target.value;
             refreshUIText();
+
+            // Auto-refresh dashboard and chat for language consistency
+            if (currentIntent) {
+                chatFeed.innerHTML = '';
+                processIntent(currentIntent, true);
+            }
         });
     }
 
@@ -479,6 +502,7 @@ function bindEvents() {
         if (currentIntent && currentIntent !== 'emergency') {
             addChatMessage(t('System'), t('Emergency cleared. Resuming guidance.'), 'success');
             clearInterval(currentSimInterval);
+            currentSimInterval = null;
             currentSimInterval = setInterval(simulateEvents, 22000);
         }
     });
@@ -494,15 +518,17 @@ function bindEvents() {
 
         // Feedback when user enters location
         locationInput.addEventListener('change', (e) => {
-            if (e.target.value.trim()) {
-                currentLocation = e.target.value.trim();
-                addChatMessage(t('Assistant'), `📍 ${t('Using your location')} (${e.target.value}) ${t('to guide you better')}`, 'insight');
+            const inputValue = e.target.value.trim();
+            if (inputValue && allowedLocations.includes(inputValue)) {
+                currentLocation = inputValue;
+                addChatMessage(t('Assistant'), `📍 ${t('Using your location')} (${inputValue}) ${t('to guide you better')}`, 'insight');
                 // Recalculate route with updated location context
                 if (currentIntent) {
                     processIntent(currentIntent, true);
                 }
             } else {
                 currentLocation = null;
+                // Silent ignore/reset
             }
         });
 
@@ -544,15 +570,18 @@ function switchScreen(screenType, immediate = false) {
         { id: 'dashboard', el: dashboardScreen }
     ];
 
+    // Clear all pending timers
+    clearAllTimeouts();
+    if (currentSimInterval) {
+        clearInterval(currentSimInterval);
+        currentSimInterval = null;
+    }
+
     // State isolation: Cleanup when leaving or entering specific screens
     if (screenType === 'dashboard') {
         clearDashboardUI();
     } else {
-        // If we are moving away from dashboard, cleanup simulation
-        if (currentSimInterval) {
-            clearInterval(currentSimInterval);
-            currentSimInterval = null;
-        }
+        // SVG cleanup is now handled by the general cleanup above for intervals
         // Clear SVG routes to prevent flicker on next entry
         activeRoutePath.setAttribute('d', '');
         altRoutePath.setAttribute('d', '');
@@ -593,10 +622,11 @@ function switchScreen(screenType, immediate = false) {
     });
 
     // Match CSS transition time
-    setTimeout(() => {
+    const transitionTimer = setTimeout(() => {
         isTransitioning = false;
         document.body.classList.remove('is-transitioning');
     }, 500);
+    activeTimeouts.push(transitionTimer);
 
     return true;
 }
@@ -614,6 +644,16 @@ function clearDashboardUI() {
     currentDestTitle.innerText = '--';
     activeRoutePath.setAttribute('d', '');
     altRoutePath.setAttribute('d', '');
+
+    // Reset State
+    bestRouteState = null;
+    currentLocation = null;
+    lastSimMessage = null;
+
+    const locationInput = document.getElementById('user-location-input');
+    const locationDisplay = document.getElementById('current-location-val');
+    if (locationInput) locationInput.value = '';
+    if (locationDisplay) locationDisplay.innerText = '--';
 }
 
 // Draw the physical nodes on the visualization
@@ -707,7 +747,7 @@ function startAssistantFlow(intentKey) {
 
     // Reset Title
     let titleStr = intentKey.charAt(0).toUpperCase() + intentKey.slice(1);
-    currentDestTitle.innerText = t(titleStr);
+    if (currentDestTitle) currentDestTitle.innerText = t(titleStr);
 
     // Update context header
     if (contextIntentEl) {
@@ -719,7 +759,9 @@ function startAssistantFlow(intentKey) {
 
     processIntent(intentKey, false);
 
-    // Start simulation loop (clearInterval is handled inside switchScreen)
+    // Start simulation loop
+    clearInterval(currentSimInterval);
+    currentSimInterval = null;
     currentSimInterval = setInterval(simulateEvents, 22000);
 }
 
@@ -828,6 +870,11 @@ function processIntent(intentKey, isRecalculation = false) {
 
     // Provide Assistant Messaging
     generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonText);
+
+    // Add AI explanation
+    getAIExplanation(bestRoute, currentScenario).then((explanation) => {
+        addChatMessage("assistant", explanation, "insight");
+    });
 }
 
 function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonText) {
@@ -836,27 +883,27 @@ function generateAssistantResponse(bestRoute, altRoute, isRecalculation, reasonT
         addChatMessage(t('Assistant'), t('Starting guidance. Checking path...'), 'message');
 
         // Step 2: "Thinking" phase
-        setTimeout(() => {
+        activeTimeouts.push(setTimeout(() => {
             addChatMessage(t('Assistant'), t('Checking crowd levels...'), 'insight');
-        }, 1200);
+        }, 1200));
 
         // Step 3: Resolution
-        setTimeout(() => {
+        activeTimeouts.push(setTimeout(() => {
             addChatMessage(t('Assistant'), `${t("Fastest route found")}.`, 'success');
-        }, 2500);
+        }, 2500));
 
         // Step 4: Simple recommendation
-        setTimeout(() => {
+        activeTimeouts.push(setTimeout(() => {
             addChatMessage(t('Recommendation'), `👉 ${t('Take')} ${t(bestRoute.name)}`, 'message', reasonText);
-        }, 3500);
+        }, 3500));
 
     } else {
         // Rerouting logic
         addChatMessage(t('System Alert'), t('Crowd shifting. Finding new path...'), 'alert');
 
-        setTimeout(() => {
+        activeTimeouts.push(setTimeout(() => {
             addChatMessage(t('Recommendation'), `${t("New path found")}! 👉 ${t("Take")} ${t(bestRoute.name)}`, 'success');
-        }, 1500);
+        }, 1500));
     }
 }
 
@@ -934,6 +981,27 @@ function triggerEmergency() {
 
     const nodeId = bestExit.path[bestExit.path.length - 1];
     nearestExitName.innerText = t(mapNodes[nodeId].name);
+}
+
+async function getAIExplanation(route, scenario) {
+    try {
+        const res = await fetch("/api/gemini", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                route: route.name,
+                scenario: scenario,
+                time: route.calculatedTime
+            })
+        });
+
+        const data = await res.json();
+        return data.text;
+    } catch (err) {
+        return "Best route based on crowd and time.";
+    }
 }
 
 // Start app
