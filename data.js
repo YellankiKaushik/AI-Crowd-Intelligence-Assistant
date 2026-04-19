@@ -143,8 +143,16 @@ function getCalculatedRoutes(intentKey, scenarioKey, userLocation) {
 
         let locBonus = 0;
         if (userLocation) {
-            const normalizedLocation = userLocation.toLowerCase().replace(/\s+/g, '_');
-            if (r.path.includes(normalizedLocation)) {
+            const locationMap = {
+              "Gate A": "gate_a",
+              "Gate B": "gate_b",
+              "Waiting Hall 1": "hall_1",
+              "Waiting Hall 2": "hall_2",
+              "Food Court": "food_court",
+              "Darshan": "darshan_point"
+            };
+            const nodeId = locationMap[userLocation];
+            if (nodeId && r.path.includes(nodeId)) {
                 locBonus = -20;
             } else {
                 locBonus = 20;

@@ -178,14 +178,24 @@
                 <span>Back</span>
             </div>
 
-            <div class="scenario-controls">
-                <span>Simulation:</span>
-                <button class="scenario-btn active" data-scenario="low">Low Crowd</button>
-                <button class="scenario-btn" data-scenario="normal">Normal</button>
-                <button class="scenario-btn" data-scenario="peak">Peak Crowd</button>
+            <div class="top-center">
+                <div class="scenario-controls">
+                    <span>Simulation:</span>
+                    <button class="scenario-btn active" data-scenario="low">Low Crowd</button>
+                    <button class="scenario-btn" data-scenario="normal">Normal</button>
+                    <button class="scenario-btn" data-scenario="peak">Peak Crowd</button>
+                </div>
             </div>
 
-            <button id="emergency-btn" class="danger-btn">⚠️ Emergency</button>
+            <div class="top-right">
+                <select id="lang-switch" class="lang-switch" style="background: transparent; color: inherit; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 5px; margin-left: 10px; outline: none; cursor: pointer; font-size: 0.9em;">
+                    <option value="en" style="color: black;">English</option>
+                    <option value="hi" style="color: black;">Hindi</option>
+                    <option value="te" style="color: black;">Telugu</option>
+                </select>
+
+                <button id="emergency-btn" class="danger-btn">⚠️ Emergency</button>
+            </div>
         </header>
 
         <div class="dashboard-content">
@@ -195,16 +205,16 @@
                 <!-- TOP: Context & Scenario -->
                 <div id="context-header" class="glass-panel">
                     <div class="context-main">
-                        📍 Navigating to: <span id="context-intent">Darshan</span>
+                        <span id="label-navigating">📍 Navigating to:</span> <span id="context-intent">Darshan</span>
                         <span class="context-divider">|</span>
-                        📡 Crowd Mode: <span id="context-scenario">Normal</span>
+                        <span id="label-crowd-mode">📡 Crowd Mode:</span> <span id="context-scenario">Normal</span>
                     </div>
                     <div class="system-explanation">🤖 AI is optimizing your route based on live conditions</div>
                 </div>
 
                 <!-- NEXT: Virtual Map (Starting Point) -->
                 <div class="virtual-map-section glass-panel">
-                    <div class="section-label">1. SELECT YOUR LOCATION</div>
+                    <div class="section-label" id="label-select-location">1. SELECT YOUR LOCATION</div>
                     <div id="virtual-map" class="map-layout-grid">
                         <div class="map-label">Gate A</div>
                         <div class="map-label">Gate B</div>
@@ -221,7 +231,7 @@
                 <!-- CENTER: MAIN ACTION (HIGHEST PRIORITY) -->
                 <div class="guidance-panel main-action-card glass-panel">
                     <div class="action-header">
-                        <span class="priority-badge">RECOMMENDED ACTION</span>
+                        <span class="priority-badge" id="label-recommended-action">RECOMMENDED ACTION</span>
                         <h2 id="action-heading">Take --</h2>
                     </div>
 
