@@ -1,169 +1,156 @@
-# 🚀 AI Crowd Intelligence Assistant
+# 🧠 AI Crowd Intelligence Assistant
 
-### Smart Navigation System for High-Density Environments
-
----
-
-## 🧠 Problem Statement
-
-Large crowded environments like temples (e.g., Tirupati), events, or public gatherings face:
-
-* ❌ Long waiting times
-* ❌ Confusion in navigation
-* ❌ Inefficient crowd movement
-* ❌ Lack of real-time guidance
-
-Users often don’t know:
-
-> *“Which path is faster?”*
-> *“Where is less crowded?”*
+> AI-powered decision system for navigating crowded environments
 
 ---
 
-## 💡 Solution Overview
+## 📌 Problem Statement
 
-**AI Crowd Intelligence Assistant** is a smart decision system that:
+In large gatherings such as temples, events, and public spaces, people face:
 
-* Guides users through crowded environments
-* Suggests optimal routes based on crowd density
-* Provides real-time-like insights using simulation + AI
+- Confusion in navigation  
+- Long waiting times  
+- Inefficient crowd movement  
+- Lack of real-time guidance  
 
-👉 It acts like a **virtual assistant for crowd navigation**
-
----
-
-## ⚙️ How It Works
-
-### 🔹 Step-by-Step Flow
-
-1. **User selects intent**
-
-   * Darshan / Food / Exit / Emergency
-
-2. **User selects current location**
-
-   * Gate A, Gate B, Waiting Hall, etc.
-
-3. **System evaluates routes**
-
-   * Time
-   * Crowd density
-   * Distance
-
-4. **Best route is selected**
-
-   * Based on scoring logic
-
-5. **AI generates explanation**
-
-   * Using Google Gemini API
-
-6. **User receives guidance**
-
-   * Route suggestion + reasoning
+There is no intelligent system that helps users decide **where to go and why**.
 
 ---
 
-## 🏗️ System Architecture
+## 🎯 Chosen Vertical
 
-```text
-User Input → Intent Selection → Route Engine → Scoring Logic → Best Route  
-→ Gemini AI → Explanation → UI Display
-```
+**Physical Event Experience**
 
----
-
-## 🤖 AI Integration (Google Gemini)
-
-This system uses **Google Gemini API** to:
-
-* Generate dynamic explanations for route decisions
-* Convert rule-based output into human-like reasoning
-
-### Example:
-
-Instead of:
-
-> “Take Gate A”
-
-AI says:
-
-> “Gate A is recommended because it currently has lower crowd density and reduces your travel time significantly.”
-
-👉 This enhances:
-
-* User trust
-* Decision clarity
-* System intelligence
+This project focuses on improving user experience in large-scale physical environments by enabling smarter navigation and decision-making.
 
 ---
 
-## 🌍 Google Services Used
+## 💡 Solution
 
-* ✅ **Google Gemini API**
+AI Crowd Intelligence Assistant is a **smart decision-support system** that:
 
-  * AI-powered explanations
-
-* ✅ **Google Maps Embed**
-
-  * Real-world location visualization
-
----
-
-## ✨ Key Features
-
-* 🧭 Smart route navigation
-* 📊 Crowd-aware decision making
-* ⚡ Real-time simulation
-* 🤖 AI-generated insights
-* 🚨 Emergency routing
-* 🌐 Multi-language support
-* 📱 Fully responsive (mobile + desktop)
+- Suggests optimal routes based on crowd and time  
+- Provides real-time guidance  
+- Explains decisions using AI  
+- Helps users move efficiently in crowded environments  
 
 ---
 
-## ⚡ Technical Highlights
+## ⚙️ Approach & Logic
 
-* Optimized route scoring algorithm
-* Controlled state management
-* Event-driven UI architecture
-* Timer-safe execution (no memory leaks)
-* Input validation for system safety
-* AI integration via secure backend
+The system follows a hybrid approach:
+
+### 1. Rule-Based Engine
+- Calculates multiple routes
+- Considers:
+  - Distance
+  - Crowd density
+  - Time estimation
+
+### 2. Scoring System
+Each route is evaluated using:
+- Travel time
+- Crowd penalty
+- Efficiency score
+
+### 3. AI Layer (Gemini)
+- Generates human-like explanations
+- Converts decisions into understandable insights
 
 ---
 
-## ⚠️ Assumptions
+## 🔄 How the Solution Works
 
-* Crowd data is simulated (not real-time)
-* Map structure is predefined
-* User location is manually selected
+1. User selects:
+   - Intent (Darshan, Exit, Food, etc.)
+   - Current location  
+
+2. System:
+   - Processes available routes  
+   - Calculates optimal path  
+
+3. Output:
+   - Best route displayed  
+   - AI-generated explanation provided  
 
 ---
 
-## 🚀 Deployment
+## 🤖 AI Integration
 
-🔗 Live Application:
-https://ai-crowd-intelligence-assistant.vercel.app/
+- Integrated **Google Gemini API**
+- Used for:
+  - Dynamic explanations
+  - Context-aware reasoning
+  - Natural language responses
+
+---
+
+## ☁️ Google Services Used
+
+- **Google Cloud Run** → Deployment  
+- **Google Gemini API** → AI reasoning  
+- **Google Antigravity** → Development acceleration  
+
+---
+
+## 🌐 Live Demo
+
+👉 https://ai-crowd-intelligence-148352897207.asia-south1.run.app
+
+---
+
+## ⚠️ Assumptions Made
+
+- Crowd data is simulated for demonstration  
+- Locations are predefined  
+- User input follows expected formats  
+- AI responses depend on API availability  
+
+---
+
+## 🚀 Key Features
+
+- Real-time decision support  
+- Multi-language support  
+- AI-generated insights  
+- Stable and responsive UI  
+- Mobile-friendly design  
 
 ---
 
 ## 🔮 Future Scope
 
-* Real-time crowd data using IoT sensors
-* GPS-based live tracking
-* Integration with Google Maps APIs
-* Predictive crowd modeling using ML
-* Large-scale event deployment
+- Integration with real-time crowd data  
+- IoT / sensor-based tracking  
+- GPS-based live navigation  
+- Predictive crowd analytics  
+- Admin dashboard for crowd management  
 
 ---
 
 ## 🏁 Conclusion
 
-This project demonstrates how **AI + smart routing logic** can:
+This project demonstrates how AI can move beyond chatbots and become a **decision-making assistant** in real-world environments.
 
-* Improve user experience in crowded environments
-* Reduce waiting time
-* Enable intelligent decision-making
+It is a step towards smarter, AI-powered public systems.
 
-> 🚀 A step towards smarter, AI-driven public navigation systems
+---
+
+## 🙌 Acknowledgement
+
+Built as part of **Prompt Wars Virtual Challenge by Hack2Skill**
+
+---
+
+# 🔥 Tech Stack
+
+- HTML, CSS, JavaScript  
+- Node.js (Express)  
+- Google Gemini API  
+- Google Cloud Run  
+
+---
+
+# 📬 Feedback
+
+Open to feedback and improvements!
