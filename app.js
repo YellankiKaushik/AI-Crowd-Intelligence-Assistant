@@ -876,10 +876,15 @@ function processIntent(intentKey, isRecalculation = false, skipAI = false) {
     if (!skipAI) {
         const requestId = ++aiRequestId;
 
-        getAIExplanation(bestRoute, currentScenario).then((explanation) => {
+        // Async execution to avoid blocking UI (Task 3)
+        getAIExplanation(bestRoute, currentScenario).then((aiText) => {
             if (requestId !== aiRequestId) return; // ignore stale responses
             if (!currentIntent) return; // user navigated away
-            addChatMessage(t('Assistant'), explanation, "insight");
+            
+            // Task 2: IF aiText exists add message, ELSE do NOTHING (keeps existing fallback message)
+            if (aiText) {
+                addChatMessage(t('Assistant'), aiText, "insight");
+            }
         });
     }
 }
@@ -1006,9 +1011,15 @@ async function getAIExplanation(route, scenario) {
         });
 
         const data = await res.json();
-        return data.text;
+
+        if (data && data.text) {
+            return data.text;
+        } else {
+            return null;
+        }
+
     } catch (err) {
-        return "Best route based on crowd and time.";
+        return null; // Silent fallback (returns null on error)
     }
 }
 
