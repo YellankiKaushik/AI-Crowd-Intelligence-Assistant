@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/gemini", async (req, res) => {
   try {
     const { route, scenario, time, lang } = req.body;
 
