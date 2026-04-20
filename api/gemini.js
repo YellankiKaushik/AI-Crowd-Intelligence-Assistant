@@ -1,4 +1,7 @@
-export default async function handler(req, res) {
+const express = require("express");
+const router = express.Router();
+
+router.post("/", async (req, res) => {
   try {
     const { route, scenario, time, lang } = req.body;
 
@@ -43,4 +46,6 @@ export default async function handler(req, res) {
       text: "Best route based on crowd and time."
     });
   }
-}
+});
+
+module.exports = router;
